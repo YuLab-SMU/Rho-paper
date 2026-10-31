@@ -1,0 +1,7 @@
+# Local work and generated render output
+/work/
+
+# Editor and OS metadata
+.DS_Store
+__pycache__/
+node_modules/

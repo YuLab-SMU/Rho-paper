@@ -2,7 +2,7 @@
 
 更新：2026-10-31。Rho 通过插件接入不同信息、算力和计算环境，并根据目的自主组织所需材料，形成可共同阅读和操作的工作界面。**拟议贡献是：依据当前科学目的和实际接入的能力，从持续分析中选择或取得材料、组织它们的关系并组合可操作的视图；这份组织同时成为人理解分析的界面和 Agent 继续工作的共享上下文，随人的操作与新进展持续更新。** 插件提供可组合的能力，版本与来源支撑持续使用；研究主张落在这些能力怎样参与同一套交互方法。
 
-以下用构造的单细胞场景说明具体机制，正面对照 InsightLens、WaitGPT、Mycelium，以及生成式界面、可视化创作和可扩展计算工作台。“布局合理”在这里是需要说明的设计目标，不由自动生成或功能可用直接推出。本文不排实验，不制定未观察过的屏幕布局规范；实现与效果证据仍按 [Status](STATUS.md) 及具体记录理解。
+以下用构造的单细胞场景说明具体机制，正面对照 InsightLens、WaitGPT、Mycelium，以及生成式界面、可视化创作和可扩展计算工作台。“布局合理”在这里是需要说明的设计目标，不由自动生成或功能可用直接推出。本文不排实验，不制定未观察过的屏幕布局规范；实现与效果证据仍按 [Status](https://github.com/YuLab-SMU/Rho/blob/main/docs/STATUS.md) 及具体记录理解。
 
 ## 1. 核心操作：按当前目的组织一个可共同工作的界面
 
@@ -142,7 +142,7 @@
 | 算力与计算环境 | 可调用的计算入口、输入及环境条件、真实任务身份、状态和结果；可针对本地资源或远程环境定制 | 决定当前可以继续什么计算、哪些仍受阻，以及怎样在等待与部分结果期间支持阅读；不隐藏环境差异 |
 | 视图与交互入口 | 适用于所接资源的呈现、选择与操作，以及它们实际作用的对象和范围 | 使领域材料可以按当前目的阅读和操作；人和 Agent 的入口指向同一能力及资源，而不是各自维护一套结果 |
 
-Rho 依据目的选择和组合这些能力，插件或原生工具继续拥有资源语义与执行事实。具体数据集、疾病比较、统计设计及分析顺序属于项目中的分析选择或配方，不能因为可以定制插件就固化进通用应用。插件也不必都有 UI；缺少某种视图不等于能力不存在，有界面入口也不等于其所需环境已经可用。这个分工与当前 [架构](ARCHITECTURE.md#state-and-lifecycle-ownership) 一致，完整插件边界见 [能力模型](https://github.com/YuLab-SMU/Rho-plugins/blob/main/docs/PLUGIN-MODEL.md)。
+Rho 依据目的选择和组合这些能力，插件或原生工具继续拥有资源语义与执行事实。具体数据集、疾病比较、统计设计及分析顺序属于项目中的分析选择或配方，不能因为可以定制插件就固化进通用应用。插件也不必都有 UI；缺少某种视图不等于能力不存在，有界面入口也不等于其所需环境已经可用。这个分工与当前 [架构](https://github.com/YuLab-SMU/Rho/blob/main/docs/ARCHITECTURE.md#state-and-lifecycle-ownership) 一致，完整插件边界见 [能力模型](https://github.com/YuLab-SMU/Rho-plugins/blob/main/docs/PLUGIN-MODEL.md)。
 
 在本文的方法中，接入条件还要进入共同上下文：当前引用哪份输入、哪些能力可用、计算在哪里运行、哪些事实尚未取得。这样，人的阅读、Agent 的下一步和实际计算进展可以围绕同一目的相互更新。接通更多后端本身没有完成这一点；反过来，只组织漂亮界面而不反映可用能力，也不能支持持续分析。原生工具仍正常使用，Core 仍是可选的托管执行路径；观察到的原生运行不因此获得托管保证。
 
@@ -233,11 +233,11 @@ Galaxy 通过 job runner 插件和目标配置接入本地、集群及其他远�
 
 | 当前已有依据 | 与提案的关系 | 尚未建立的部分 |
 | --- | --- | --- |
-| [插件能力与应用组合](ARCHITECTURE.md#source-owners) 及 [UI 扩展](PLUGIN-AUTHORING.md) | 接入与语义由能力拥有者提供，Rho 负责选择、组合与共享交互；UI 扩展复用已有能力 | 当前 UI 扩展路径不等于新增任意服务端能力；本文的远程单细胞接入是方法示例，不是已验收连接器清单 |
-| [Process Studio](SIMULATED-PROJECT-EPISODE.md#process-studio) | 已有从过程记录按角色组织材料、组合视图与布局的实践基础 | 既有情节不证明对任意科学目的均能自主选材并形成适当布局 |
-| [Project notes 与 meaning layer](SIMULATED-PROJECT-EPISODE.md#project-notes) | 共同笔记、界面解释和材料引用已经有载体；Rho 可参与外部记忆 | 笔记更新指令不保证实时更新，也未建立本文整套局部修订往返 |
-| [上下文与反馈](COLLABORATION.md#feedback-and-explicit-response) | 可区分准备、读取和显式回复，为检查接入提供基础 | 不能据此声称所有原生压缩都保留修订，或读取等于采用 |
-| [保留证据](REVIEW-EVIDENCE-EPISODE.md#capture-and-review) 与 [状态归属](ARCHITECTURE.md#state-and-lifecycle-ownership) | 可保留材料、诚实表达观察缺口；模型内部上下文仍属运行时 | 保留引用不自动建立全部科学关系，也不证明三种状态已协调 |
+| [插件能力与应用组合](https://github.com/YuLab-SMU/Rho/blob/main/docs/ARCHITECTURE.md#source-owners) 及 [UI 扩展](https://github.com/YuLab-SMU/Rho/blob/main/docs/PLUGIN-AUTHORING.md) | 接入与语义由能力拥有者提供，Rho 负责选择、组合与共享交互；UI 扩展复用已有能力 | 当前 UI 扩展路径不等于新增任意服务端能力；本文的远程单细胞接入是方法示例，不是已验收连接器清单 |
+| [Process Studio](https://github.com/YuLab-SMU/Rho/blob/main/docs/SIMULATED-PROJECT-EPISODE.md#process-studio) | 已有从过程记录按角色组织材料、组合视图与布局的实践基础 | 既有情节不证明对任意科学目的均能自主选材并形成适当布局 |
+| [Project notes 与 meaning layer](https://github.com/YuLab-SMU/Rho/blob/main/docs/SIMULATED-PROJECT-EPISODE.md#project-notes) | 共同笔记、界面解释和材料引用已经有载体；Rho 可参与外部记忆 | 笔记更新指令不保证实时更新，也未建立本文整套局部修订往返 |
+| [上下文与反馈](https://github.com/YuLab-SMU/Rho/blob/main/docs/COLLABORATION.md#feedback-and-explicit-response) | 可区分准备、读取和显式回复，为检查接入提供基础 | 不能据此声称所有原生压缩都保留修订，或读取等于采用 |
+| [保留证据](https://github.com/YuLab-SMU/Rho/blob/main/docs/REVIEW-EVIDENCE-EPISODE.md#capture-and-review) 与 [状态归属](https://github.com/YuLab-SMU/Rho/blob/main/docs/ARCHITECTURE.md#state-and-lifecycle-ownership) | 可保留材料、诚实表达观察缺口；模型内部上下文仍属运行时 | 保留引用不自动建立全部科学关系，也不证明三种状态已协调 |
 
 这些能力只说明探索条件，不用来反推论文新颖性。本文没有新增执行审批，不改变 Core 的可选性，不修改产品实现。
 
