@@ -1,0 +1,123 @@
+\begin{thebibliography}{10}
+
+\bibitem{waitgpt}
+Xie et~al.
+\newblock {WaitGPT}: Monitoring and steering conversational {LLM} agent in data
+  analysis with on-the-fly code visualization, 2024.
+\newblock UIST; arXiv:2408.01703v1; \url{https://arxiv.org/abs/2408.01703v1}.
+
+\bibitem{decomposition}
+Kazemitabaar et~al.
+\newblock Improving steering and verification in {AI}-assisted data analysis
+  with interactive task decomposition, 2024.
+\newblock UIST; arXiv:2407.02651v2; \url{https://arxiv.org/abs/2407.02651v2}.
+
+\bibitem{insightlens}
+Weng et~al.
+\newblock {InsightLens}: Augmenting {LLM}-powered data analysis with
+  interactive insight management and navigation, 2025.
+\newblock IEEE Transactions on Visualization and Computer Graphics;
+  arXiv:2404.01644v2; \url{https://arxiv.org/abs/2404.01644v2}.
+
+\bibitem{dynavis}
+Vaithilingam et~al.
+\newblock {DynaVis}: Dynamically synthesized {UI} widgets for visualization
+  editing, 2024.
+\newblock CHI; arXiv:2401.10880v1; \url{https://arxiv.org/abs/2401.10880v1}.
+
+\bibitem{dashchat}
+Shen et~al.
+\newblock {DashChat}: Interactive authoring of industrial dashboard design
+  prototypes through conversation with {LLM}-powered agents, 2025.
+\newblock arXiv:2504.12865v1; \url{https://arxiv.org/abs/2504.12865v1}.
+
+\bibitem{dataformulator}
+Wang et~al.
+\newblock Data formulator 2: Iteratively creating rich visualizations with
+  {AI}, 2024.
+\newblock arXiv:2408.16119v1; \url{https://arxiv.org/abs/2408.16119v1}.
+
+\bibitem{mycelium}
+Choudhury et~al.
+\newblock Networked intelligence: Active shared context graphs for human-{AI}
+  team science, 2026.
+\newblock arXiv:2607.13220v1; \url{https://arxiv.org/abs/2607.13220v1}.
+
+\bibitem{semv}
+Nguyen et~al.
+\newblock Self-evolving multimedia verification through memory consolidation of
+  contestation experiences, 2026.
+\newblock arXiv:2609.27175v1; \url{https://arxiv.org/abs/2609.27175v1}.
+
+\bibitem{prov}
+{W3C}.
+\newblock {PROV-DM}: The {PROV} data model, 2013.
+\newblock W3C Recommendation;
+  \url{https://www.w3.org/TR/2013/REC-prov-dm-20130430/}.
+
+\bibitem{tisane}
+Jun, Seo, Heer, and Just.
+\newblock Tisane: Authoring statistical models via formal reasoning from
+  conceptual and data relationships, 2022.
+\newblock CHI; arXiv:2201.02705v1; \url{https://arxiv.org/abs/2201.02705v1}.
+
+\bibitem{jati2025}
+S.~Jati et~al.
+\newblock Chromogranin {A} deficiency attenuates tauopathy by altering
+  epinephrine-alpha-adrenergic receptor signaling in {PS19} mice.
+\newblock {\em Nature Communications}, 2025.
+\newblock \url{https://pubmed.ncbi.nlm.nih.gov/40393970/}.
+
+\bibitem{koutsodendris2023}
+N.~Koutsodendris et~al.
+\newblock Neuronal {APOE4} removal protects against tau-mediated gliosis,
+  neurodegeneration and myelin deficits.
+\newblock {\em Nature Aging}, 2023.
+\newblock \url{https://pubmed.ncbi.nlm.nih.gov/37118426/}.
+
+\bibitem{squair2021}
+Jordan~W. Squair et~al.
+\newblock Confronting false discoveries in single-cell differential expression.
+\newblock {\em Nature Communications}, 12:5692, 2021.
+\newblock \url{https://doi.org/10.1038/s41467-021-25960-2}.
+
+\bibitem{liu2024}
+M.~Liu et~al.
+\newblock Spatially-resolved transcriptomics reveal macrophage heterogeneity
+  and prognostic significance in diffuse large {B}-cell lymphoma.
+\newblock {\em Nature Communications}, 2024.
+\newblock \url{https://pubmed.ncbi.nlm.nih.gov/38459052/}.
+
+\bibitem{kiesworo2025}
+K.~Kiesworo et~al.
+\newblock Nicotinamide mononucleotide restores impaired metabolism, endothelial
+  cell proliferation and angiogenesis in old sedentary male mice.
+\newblock {\em iScience}, 2025.
+\newblock \url{https://pubmed.ncbi.nlm.nih.gov/39868046/}.
+
+\bibitem{chin2025}
+W.~L. Chin et~al.
+\newblock Coupling of response biomarkers between tumor and peripheral blood in
+  patients undergoing chemoimmunotherapy.
+\newblock {\em Cell Reports Medicine}, 2025.
+\newblock \url{https://pubmed.ncbi.nlm.nih.gov/39731918/}.
+
+\bibitem{acp}
+{Rho contributors}.
+\newblock Claude, codex and external {ACP} sessions, 2026.
+\newblock Implementation record;
+  \url{https://github.com/YuLab-SMU/Rho/blob/main/docs/ACP-MULTI-AGENT-EPISODE.md}.
+
+\bibitem{baser}
+{Rho contributors}.
+\newblock Base-{R} collaboration episode, 2026.
+\newblock Implementation record;
+  \url{https://github.com/YuLab-SMU/Rho/blob/main/docs/BASE-R-EPISODE.md}.
+
+\bibitem{pa14}
+{Rho contributors}.
+\newblock {PA14} quorum-sensing example project, 2026.
+\newblock Project description, pinned revision;
+  \url{https://github.com/YuLab-SMU/Rho/blob/64d73550f4bb1786e6cec42071fbe8a67a8ba230/example/pa14-qs/README.md}.
+
+\end{thebibliography}

@@ -1,6 +1,15 @@
 # Local work and generated render output
 /work/
 
+# Local LaTeX intermediates and generated large delivery artifacts.
+/drafts/arxiv/main.aux
+/drafts/arxiv/main.blg
+/drafts/arxiv/main.log
+/drafts/arxiv/main.out
+/drafts/arxiv/main.pdf
+/drafts/arxiv/rho-arxiv-source-draft.zip
+/output/pdf/rho-arxiv-working-draft.pdf
+
 # Local reading copies of third-party works; see references/README.md.
 /references/full-text/
 

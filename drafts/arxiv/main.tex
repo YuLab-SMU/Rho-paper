@@ -1,0 +1,233 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{microtype}
+\usepackage{placeins}
+\usepackage{xurl}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\setlength{\emergencystretch}{3em}
+\title{Rho: A Human--AI Collaborative Interface for Discovering Questions and Testing Explanations}
+\author{%
+  Yonghe Xia$^{1}$ \quad Guangchuang Yu$^{2,*}$\\[0.5em]
+  \small $^{1}$School of Medicine, Westlake University, Hangzhou, China\\
+  \small $^{2}$Department of Bioinformatics, School of Basic Medical Sciences,\\
+  \small Southern Medical University, Guangzhou, China\\[0.4em]
+  \small Yonghe Xia: \href{mailto:xiayonghe@westlake.edu.cn}{xiayonghe@westlake.edu.cn}\\
+  \small $^{*}$Corresponding author: \href{mailto:gcyu1@smu.edu.cn}{gcyu1@smu.edu.cn}%
+}
+\date{}
+\begin{document}
+\maketitle
+\begin{abstract}
+Data analysis rarely ends with the first figure or a single answer. A result can raise a new question, disagree with a published analysis, or expose a choice that must be revisited before an explanation is credible. When an AI agent performs the computation, the researcher must also be able to inspect what ran, which objects and outputs are available, and how a reported finding relates to them. We present Rho, a human--AI collaborative interface that brings an agent, a shared computational session, project materials, and views of an analysis process into the same workspace. Rho is designed to support a cycle in which people and agents formulate questions, produce and inspect results, and revise or continue an analysis. We illustrate the interface using five locally run analyses based on public datasets from published studies. These examples cover selected expression-analysis tasks, not complete reproductions of the studies. In one bulk RNA-seq case, the recovered differential-expression counts differed from the published counts; Rho displayed the analysis, outputs, notes, and reported choices for inspection. A single-nucleus case brings sample-level replication and cell annotations into view as questions for further analysis. The observations demonstrate concrete interface behaviour under one configuration, while leaving usability, comparative benefit, and the scientific validity of individual analyses to further evaluation.
+\end{abstract}
+
+\section{Introduction}\label{introduction}
+
+An analysis becomes interesting when its first result is not the end of the question. A contrast may produce a pattern that invites a mechanistic explanation; a reanalysis may yield counts that differ from a published figure; a comparison may prompt closer examination of the samples and cell types involved. In each case, the next step depends on more than the latest answer. Researchers need to see the comparison, the data and code that produced it, the relevant results, and the choices that make an interpretation plausible or questionable.
+
+AI agents can write code and run analyses, but their outputs do not remove this need. An agent's answer may summarize a result without exposing the observation unit, a changed input, or the analysis choices behind it. A conversation transcript can preserve the sequence of messages while leaving the researcher to reconstruct how a claim, file, calculation, and decision relate. Conversely, an analysis interface may make a figure visible without making the agent's computational state or subsequent context accessible.
+
+Rho approaches this problem as a shared working environment. An agent can execute R code in a Notebook session that the person can also inspect and use. Project notes, files, variables, outputs, and views of the process provide entry points into the work. Studio brings materials from a conversation together for review; Graph presents relationships recorded or observed from different sources. These representations support inspection, but a displayed relationship is not itself proof that a scientific claim is correct or that an agent has incorporated every change.
+
+We use \emph{discovering questions} broadly: a question may be supplied by the researcher, emerge from a discrepancy, or follow from an incomplete result. \emph{Testing explanations} means making an explanation answerable to particular results and analysis choices; it does not mean that the interface can validate a biological mechanism by itself. Our aim is to make the movement between question, computation, result, and interpretation a visible part of collaborative analysis.
+
+This paper makes three contributions. First, it describes Rho as an interface that connects agent work with a shared analysis session and inspectable project materials. Second, it develops concrete cases in which a published-result discrepancy, a single-nucleus comparison, and alternative analytical choices give the researcher different reasons to inspect or continue the work. Third, it illustrates the interface with five selected analyses using public data from published studies. These observations are not evidence of improved understanding, a comparison against other systems, or a user study.
+
+\section{Related work}\label{related-work}
+
+Research on AI-assisted analysis already provides several of the capabilities that Rho brings together. WaitGPT makes generated code and execution steps inspectable and supports local intervention; interactive task decomposition exposes intermediate tasks for steering and verification \cite{waitgpt,decomposition}. InsightLens organizes extracted insights with their supporting code, outputs and visualizations \cite{insightlens}. These systems establish important precedents for process inspection and insight navigation; the present cases do not establish that Rho makes people more effective at either.
+
+Intent-driven interfaces are also an established line of work. DynaVis creates interactive controls for visualization edits, DashChat composes dashboard prototypes, and Data Formulator 2 uses data threads to revisit analysis states and supply context for subsequent work \cite{dynavis,dashchat,dataformulator}. Rho's focus here is the relationship between a particular analysis question and inspectable computational materials in a shared project. We do not claim that generating layouts, keeping history, or using a selected state as agent context is new.
+
+Shared scientific context and revision have direct precedents. Mycelium links scientific observations, interpretations and hypotheses, and records a human constraint reaching a later analysis \cite{mycelium}. SEMV supports challenges to claims and evidence and retains revised reports \cite{semv}. Provenance models such as PROV-DM distinguish entities, activities and derivations \cite{prov}; representing such links does not make the linked interpretation correct. Tisane demonstrates interactive reasoning from data and conceptual relationships to statistical models \cite{tisane}. These precedents help define the scope of our contribution: a concrete interface and its observed use in selected analysis episodes, not a new provenance ontology or an automatic scientific validator.
+
+\section{Rho and the analysis setting}\label{rho-and-the-analysis-setting}
+
+\subsection{Design and interface}\label{design-and-interface}
+
+Rho organizes work around a project containing analysis materials such as data, scripts, notes, outputs and recorded activity. The Notebook provides an R session in which the agent's cells, outputs and live variables can be inspected. Studio brings selected materials and conversation views together; the Overview presents an answer and associated files; Graph displays associations drawn from notes and activity. These are views of particular recorded states, not a guarantee that all materials are semantically linked or that an agent has read every displayed item.
+
+The guiding design question is how a researcher can move from a question to the evidence needed to assess an explanation, and back to the next analysis. The required materials differ by question: checking a reversal count calls for contrasts and inclusion rules; assessing a single-nucleus comparison calls for sample membership as well as a cell embedding. The cases below show specific arrangements and recorded choices. They do not establish an automatic method for selecting an optimal arrangement for every purpose.
+
+Rho distinguishes material of different origins: an agent's summary or stated plan, a note, a command reference, an observed file and a computational output support different inferences. Reading a displayed result is not equivalent to endorsing it. A further analysis may change a result without retroactively making an earlier interpretation valid. The interface provides entry points for inspection; scientific judgement and appropriate statistical design remain the researcher's responsibility.
+
+\subsection{Case selection and evidence}\label{case-selection-and-evidence}
+
+We describe five selected analyses using publicly available GEO datasets associated with published biomedical studies. They were run on one local machine with one agent and one model in Rho 0.5.2; the public data were downloaded before the runs and R code was executed in the shared Notebook session. The tasks cover particular expression analyses rather than complete reproductions of the studies. The local project scripts, result tables, notes, session exports and screenshots underpin the descriptions, but their implementation record is not yet publicly available. The original studies and GEO accessions identify the input sources; they are not independent evidence that these local analyses are correct.
+
+Table~\ref{tab:cases} summarizes the cases. They are observational demonstrations of what the interface displayed and what the saved analyses reported. There was no independent participant or comparative user study. We distinguish screenshots captured during the original P1 session from later 3840 $\times$ 1972 captures of reopened P2--P5 projects, where the saved views and artifacts were available but the original R sessions had ended. Separately redrawn plots are identified in their captions.
+
+\begin{table}[!htbp]
+\centering
+\small
+\caption{The five illustrative projects and the question used to examine each one. Each task covers only a selected part of its source study.}
+\label{tab:cases}
+\begin{tabular}{@{}l >{\raggedright\arraybackslash}p{0.18\linewidth} >{\raggedright\arraybackslash}p{0.21\linewidth} >{\raggedright\arraybackslash}p{0.43\linewidth}@{}}
+\hline
+Case & Public data & Analysis & Question for inspection \\
+\hline
+P1 & GSE274459 & Bulk RNA-seq & How do comparison and reversal definitions relate to the differing counts? \\
+P2 & GSE221215 & Single-nucleus RNA-seq & How do sample replication and cell annotation affect interpretation? \\
+P3 & GSE232853 & GeoMx spatial profiling & Which compartment contributes to a pathway interpretation? \\
+P4 & GSE270697 & Bulk RNA-seq & Which input and analysis choices could relate to the reported discrepancy? \\
+P5 & GSE252990 & Blood transcriptome & What can a patient-paired comparison support? \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Illustrative analysis episodes}\label{illustrative-analysis-episodes}
+
+\subsection{P1. A discrepancy in tauopathy bulk RNA-seq}\label{p1.-a-discrepancy-in-tauopathy-bulk-rna-seq}
+
+The first project started from a published bulk RNA-seq study of chromogranin A and tauopathy and its GEO data \cite{jati2025}. The requested task was narrower than reproducing the paper: recompute specified differential-expression and reversal counts, perform GO biological-process enrichment, and record outputs and choices. The public data had been downloaded before the run. A local project README stated the comparisons and expected files; the 17 samples comprised five wild-type, six hTau and six CgA-KO/hTau samples. The agent executed R code in Rho's shared Notebook session, using two pairwise DESeq2 contrasts with nominal P \textless{} 0.01 and \textbar log2 fold change\textbar{} \textgreater{} 0.5.
+
+The first result was a discrepancy, not a confirmation. The local run reported 1,096 up- and 1,549 down-regulated genes for the first contrast, versus 1,193 and 869 reported in the task's comparison with the paper. The reversal counts were 334 and 551, versus 417 and 293. The recorded analysis retained alternative reversal definitions in a separate table. These counts describe one run and one comparison; they do not establish why the published numbers differed, nor do they establish which definition is scientifically correct.
+
+The discrepancy changes what the researcher needs to inspect. Rather than asking only whether the run produced a figure, the researcher can ask which samples and contrast were used, how reversal was defined, which choices affected the counts, and whether those choices match the published analysis. Rho's role in this case is to keep the computation and its materials available for that investigation.
+
+\subsubsection{Inspecting the computation}\label{inspecting-the-computation}
+
+Figure~\ref{fig:notebook} shows the agent-attributed cell, its output and the live variables recorded during the P1 run.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth,height=0.80\textheight,keepaspectratio]{figures/figure-1-notebook.png}
+\caption{\textbf{Shared computation in the P1 Notebook.} Enlarged regions of a single capture show (A) an R cell attributed to Claude Code, with its stated purpose and elapsed time; (B) reported counts and a gene-mapping warning; and (C) two parts of the live Variables pane, including \texttt{enrichResult} objects. The capture records a state during the local application test of Rho 0.5.2. Regions have been rearranged for legibility; screenshot content is unchanged.}
+\label{fig:notebook}
+\end{figure}
+
+The Notebook made it possible to inspect an agent-attributed cell alongside its output and live variables. The same session contained data frames, plotting objects, and enrichment results. This is an observed property of the run: it does not mean that every analysis choice was correct, and it does not by itself show that the person understood or endorsed an output.
+
+\subsubsection{Bringing the analysis back together}\label{bringing-the-analysis-back-together}
+
+Figures~\ref{fig:studio} and~\ref{fig:graph} show two views of the project's recorded materials.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth,height=0.80\textheight,keepaspectratio]{figures/figure-2-studio.png}
+\caption{\textbf{P1 in Studio.} Enlarged regions show (A) the question in project notes and (B) the files listed in the agent's answer. (C) A region of the same capture shows the conversation's work views and timeline. The regions have been rearranged for legibility; their presence does not establish that each component was read by the agent.}
+\label{fig:studio}
+\end{figure}
+
+Studio places the written question next to the materials produced during the work. The local notes identify the data and method, list files, and preserve the unresolved difference in counts. This layout makes it possible to move from a conclusion to a relevant script, output, or recorded choice without treating a generated summary as the only source of truth. It is one concrete arrangement observed in this project; the test did not establish that Rho automatically selects an optimal arrangement for every research question.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth,height=0.80\textheight,keepaspectratio]{figures/figure-3-graph.png}
+\caption{\textbf{P1 in Graph.} (A) A region of the graph relates the question, findings, script and result files. (B) An enlarged detail repeats one finding from A. (C) The relationship legend is redrawn from the same capture for legibility. Edges make recorded associations navigable; they do not certify the validity of a scientific explanation.}
+\label{fig:graph}
+\end{figure}
+
+Graph provides another route through the same project. In the recorded state, it showed four findings and five choices from the notes, alongside files and runs. The provenance legend matters: an agent's report that a result exists, a filename mentioned in a command, an observed disk change, and a statement in notes are different kinds of evidence. Keeping them distinct helps the reader identify what still requires checking. It does not convert the graph into a validated model of the scientific reasoning.
+
+\FloatBarrier
+
+\subsection{P2. Single-nucleus data: what is the biological replicate?}\label{p2.-single-nucleus-data-what-is-the-biological-replicate}
+
+The second project used hippocampal single-nucleus data from a study of neuronal APOE4 removal \cite{koutsodendris2023} (GEO GSE221215). The local task began with 11 samples and retained 92,597 nuclei after quality control. The agent's analysis clustered the nuclei and assigned coarse cell classes; 8,364 nuclei remained unresolved. These labels are working annotations, not independently validated cell identities. Figure~\ref{fig:p2} shows the embedding alongside the per-sample quality-control table.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth,height=0.80\textheight,keepaspectratio]{figures/figure-4-p2.png}
+\caption{\textbf{Single-nucleus classes and sample-level quality control.} A crop of the reopened P2 Studio displays the saved UMAP and per-sample QC table. The source capture was 3840 $\times$ 1972 pixels; the figure preserves the pixels in the selected region. The classes are preliminary, and the R session was no longer live when this view was captured.}
+\label{fig:p2}
+\end{figure}
+
+The visual grouping opens a more specific question: do the apparent differences reflect the biological samples, or merely the number of nuclei contributed by each one? The local excitatory-neuron comparison contained 20,832 PS19-fE4 and 8,533 PS19-fE3 nuclei from four and three mice, respectively. Its cell-level Wilcoxon test did not model dependence among nuclei from the same mouse. A large number of nuclei therefore does not provide the same replication as a large number of mice \cite{squair2021}. The per-sample QC table and the UMAP serve different purposes: one exposes sample contributions, while the other shows how the assigned classes occupy the embedding. Neither establishes that the differential-expression list is reliable.
+
+This local comparison also asks a different question from the original study's central neuronal APOE4-deletion intervention. The gene list was not compared with the paper's list. A defensible continuation would validate the class labels, align the intended contrast with the study, and repeat the comparison with an appropriate sample-aware model. Rho makes the materials for that decision accessible; it does not supply the biological judgement.
+
+\FloatBarrier
+
+\subsection{P3. Spatial profiling: which compartment supports an explanation?}\label{p3.-spatial-profiling-which-compartment-supports-an-explanation}
+
+The third project used the GeoMx digital spatial profiling dataset GSE232853 from a diffuse large B-cell lymphoma study \cite{liu2024}. The local matrix contained 16,560 genes and 578 areas of illumination, including CD68- and CD20-selected segments. The task compared those two compartments, first checking marker expression and then fitting a limma model with \texttt{duplicateCorrelation} for paired segments. The project also retained paired-only and unpaired alternatives, making the choice of comparison inspectable. Figure~\ref{fig:p3} shows the local pathway table and a redraw of its significant terms.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth,height=0.80\textheight,keepaspectratio]{figures/figure-5-p3.png}
+\caption{\textbf{From a compartment comparison to its pathway table.} (A) A native-pixel crop of the reopened P3 Studio shows the saved Hallmark table; the original display capture was 3840 $\times$ 1972 pixels. (B) A separately redrawn plot uses the same local table and displays the 13 terms with Benjamini--Hochberg-adjusted P \textless{} 0.05. Point position is the recorded gene ratio, size is the number of genes, and colour encodes adjusted P. The redraw is not a screenshot or a new enrichment analysis.}
+\label{fig:p3}
+\end{figure}
+
+At adjusted P \textless{} 0.05 and \textbar log2 fold change\textbar{} \textgreater{} 0.58, the main analysis reported 1,111 differentially expressed genes, of which 833 were higher in CD68 and 278 higher in CD20. An over-representation analysis of the combined list identified 13 significant Hallmark sets, including complement and interferon-gamma response. Because the analysis pooled both directions, an enriched term does not say which compartment drives it. The relevant next question is therefore directional: does the same pathway appear when genes higher in each compartment are analysed separately? The recorded panel background matters as well; these results describe enrichment within the measured gene panel, not an unrestricted genome-wide universe.
+
+The local matrix did not include the spatial-region labels required for the original study's region-level comparison, and the original Hallmark results were not available for a direct comparison. The case illustrates how a graph, table, analysis design and retained alternatives can inform the next question, not a replication of the full spatial study.
+
+\FloatBarrier
+
+\subsection{P4. Ageing endothelium: why do reported counts differ?}\label{p4.-ageing-endothelium-why-do-reported-counts-differ}
+
+The fourth project examined the transcriptomic arm of an ageing study that also included metabolomics \cite{kiesworo2025} (GSE270697). The local analysis used three old and four young mouse skeletal-muscle endothelial samples. After transcript-to-gene mapping and filtering, it fitted a limma--voom comparison. At BH-adjusted P \textless{} 0.05 and \textbar log2 fold change\textbar{} \textgreater{} 1, it reported 604 genes: 370 higher and 234 lower in old samples. The project records the paper's corresponding total as 500, comprising 406 higher and 94 lower. These figures make the discrepancy visible without explaining it (Figure~\ref{fig:p4}).
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth,height=0.80\textheight,keepaspectratio]{figures/figure-6-p4.png}
+\caption{\textbf{A discrepancy and selected pathways in P4.} (A) A native-pixel crop of the reopened project shows the agent's reported counts; the original display capture was 3840 $\times$ 1972 pixels. (B) A separate redraw shows the five terms with the lowest adjusted P from each local GO BP and KEGG table. The redraw is not a screenshot or a new analysis. The answer is the agent's interpretation, not independent validation of its explanation.}
+\label{fig:p4}
+\end{figure}
+
+The saved choices identify several questions that a reviewer can pursue. The local analysis used an Ensembl 102 transcript map and a particular expression filter, whereas the paper used a different analysis pipeline. Alternative annotation and filtering were recorded, but their reported sensitivity totals use adjusted P alone, so they cannot be directly compared with the 604-gene count that also applies a fold-change threshold. One transcript absent from the candidate annotations accounted for approximately 34\% of counts in each sample; its effect on normalization was not measured. These observations identify potential sources of difference, not a tested cause.
+
+The pathway view offers a second example of why the underlying table matters. In the local ranked analysis, KEGG oxidative phosphorylation had a negative normalized enrichment score (\ensuremath{-}2.74) for old versus young. The original project plot contains only the ten most significant terms per source; the redraw in Figure~\ref{fig:p4} shows five per source. All terms in these selections are lower in old samples, which should not be read as the direction of every significant pathway. The metabolomics arm was not analysed in this project.
+
+\FloatBarrier
+
+\subsection{P5. Patient transcriptomes: separating a paired comparison from response prediction}\label{p5.-patient-transcriptomes-separating-a-paired-comparison-from-response-prediction}
+
+The fifth project used the blood-expression component of a multi-omics mesothelioma study \cite{chin2025} (GSE252990). Its local matrix contained measurements from 40 patients at three time points. At baseline, 23 were recorded as responders and 17 as non-responders, whereas the study's phase II cohort was reported as 31 and 23. These are different scopes: the available matrix does not represent the entire 54-person cohort. Figure~\ref{fig:p5} shows the saved paired-comparison table.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth,height=0.80\textheight,keepaspectratio]{figures/figure-7-p5.png}
+\caption{\textbf{A saved patient-level comparison in a Rho workspace.} The table shows the local on-treatment versus baseline results, reopened after the run. The source capture was 3840 $\times$ 1972 pixels and the selected region retains its original pixels. The view presents a saved table; the historical notebook and project records are needed to inspect its analysis context.}
+\label{fig:p5}
+\end{figure}
+
+For the on-treatment question, the analysis paired baseline and C3D1 samples from the same 40 patients using a patient-plus-time design. The available expression matrix contained continuous, apparently normalized values, so the main local analysis applied log2(x + 1) and limma \texttt{lmFit}/\texttt{eBayes}; it reported 2,596 genes at BH-adjusted P \textless{} 0.05. An alternative that applied voom directly to the supplied values reported 4,532. This contrast between outputs exposes sensitivity to input handling; it is not evidence that treating normalized values as counts is appropriate, or that either count is a verified biological finding.
+
+The pairing addresses within-patient change and asks a different question from baseline prediction of response. It also does not, by itself, distinguish treatment effects from other changes over time. The useful continuation is to establish the matrix's processing history, check the model and sample metadata, and compare the appropriate contrast with the original study. The local project did not analyse the study's single-cell component.
+
+\FloatBarrier
+
+\section{Collaboration beyond the Rho window}\label{collaboration-beyond-the-rho-window}
+
+An agent need not originate in Rho for a researcher to bring its work into the project. In an installed external ACP episode \cite{acp}, an existing Codex session used an explicitly configured relay. The original client retained its input, permission choices and runtime, while Rho displayed the external session's reported plan and references to project files. The observed plan describes the agent's activity; a file reference or current file hash does not alone establish authorship or scientific correctness. This is a specific relay-based connection, not passive attachment to an arbitrary running client (Figure~\ref{fig:external}).
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth,height=0.80\textheight,keepaspectratio]{figures/figure-8-external-agent.png}
+\caption{\textbf{An external agent and Rho.} (A) An explanatory diagram of the explicit ACP connection. (B) An actual Rho-side capture during the separate installed external Codex episode, showing a live reported plan; the original capture was 1440 $\times$ 900 pixels. It does not show the external client window. This episode used a different package composition from the five 0.5.2 analysis projects.}
+\label{fig:external}
+\end{figure}
+
+A separate base-R collaboration episode \cite{baser} demonstrates the scientific handoff itself. An automated operator selected May in an \texttt{airquality} table and asked an external Claude Code agent why there were 24 observations and to exclude only missing ozone values. The agent received the selected row and version through a project-scoped MCP handoff, changed the script and linked the recalculated outputs. May changed from 24 observations with mean ozone 24.125 to 26 with mean 23.615; an independent base-R expression checked the five monthly aggregates. The original and new tables remained separately available for comparison. This is a controlled demonstration with an automated operator, not evidence of human usability or a validation of the missing-data assumption.
+
+Rho's bundled PA14 quorum-sensing project \cite{pa14} provides another starting point. It brings together swarming measurements, co-culture ratios, RNA-seq counts and annotations to ask what the las and rhl systems contribute to collective behaviour. It is an illustrative project, not a sixth independent analysis in the five-project episode.
+
+\section{Discussion}\label{discussion}
+
+Rho's design makes an analysis available as a connected body of work: a question, its materials, computational activity, results and recorded choices. The five cases give this design a concrete use: a mismatch with published counts, the biological replicate behind a cell-level comparison, direction in a spatial contrast, sensitivity to annotation, and a patient-paired comparison each demand different evidence. The external-agent episodes show two specific routes by which work initiated elsewhere can be connected to project materials. These observations characterize examples, not the frequency of successful scientific discovery.
+
+A shared view is useful only insofar as its representations remain interpretable. An output file, an agent-generated explanation and an independently verified scientific conclusion have different evidential status. Showing a table next to a plot can help locate the source of a question, but does not determine whether a model's assumptions are suitable, whether a reported difference is biological, or whether a researcher's next decision is sound. These questions require domain and statistical review.
+
+\subsection{Limitations and future evaluation}\label{limitations-and-future-evaluation}
+
+The examples use one configuration and selected, pre-existing datasets. They do not compare Rho with an alternative interface, measure users' understanding or decision quality, or establish full reproduction of the source studies. The P2 cell classes and comparisons require sample-aware validation; P3's combined enrichment has no direction; P4's unexplained annotation loss and count discrepancy need further investigation; and P5 depends on input-processing choices. No one case provides evidence that Rho validates scientific conclusions.
+
+The next evidence should include an accessible, versioned record of each analysis; independent scientific review of the scripts, inputs and interpretations; and observations of researchers pursuing their own questions. A comparative study could test whether the interface helps people locate the evidence behind a claim, identify a discrepancy or choose a suitable next step. These remain research questions, not established outcomes of the present demonstrations.
+
+\section{Data, code and evidence availability}\label{data-code-and-evidence-availability}
+
+The public source datasets are GEO GSE274459, GSE221215, GSE232853, GSE270697 and GSE252990. The Rho implementation and the published external-agent episode records are available at \url{https://github.com/YuLab-SMU/Rho}; the bundled PA14 project is cited separately. The five analysis projects and their execution record are local and are not yet publicly archived. Their versioned release, including scripts and outputs sufficient to assess the stated results, is necessary before this manuscript can support independent review of those claims.
+
+\FloatBarrier
+\bibliographystyle{unsrt}
+\bibliography{references}
+\end{document}
