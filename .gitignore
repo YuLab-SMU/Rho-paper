@@ -1,6 +1,9 @@
 # Local work and generated render output
 /work/
 
+# Local reading copies of third-party works; see references/README.md.
+/references/full-text/
+
 # Editor and OS metadata
 .DS_Store
 __pycache__/
