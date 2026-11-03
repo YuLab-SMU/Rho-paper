@@ -155,17 +155,17 @@ Load-bearing claim & Invariant that makes it checkable & Evidence in this paper 
 \hline
 Purpose decides materials and relations & Composition is a stable-ID acyclic tree; a view names exact component versions, props and resource bindings; owners validate them and an unknown rendering entry stays unavailable & P1 (figure, donor mapping, model); Table~\ref{tab:cases} \\
 \hline
-Three kinds of change stay distinct & Moving changes layout only; an analysis-scope change is an owner action, not a view move; undo reverses only the latest layout transaction and never touches buffers, resource bytes or native requests; view protection survives undo; selections are caller-, view- or shared-scoped, and an agent's private selection never replaces the person's & P1 reading along relations; P3 retained alternatives \\
+Three kinds of change stay distinct & Moving changes layout only; an analysis-scope change is an owner action, not a view move; undo reverses only the latest layout transaction and never touches buffers, resource bytes or native requests; view protection survives undo; selections are caller-, view- or shared-scoped, and an agent's private selection never replaces the person's & P1 reading along relations; P3 retained alternatives; the move/undo/protection distinction is design \\
 \hline
 Shared state is distinguished by source & Managed execution facts, append-only annotations anchored to an exact version, and agent or document text belong to different owners; execution completion, artifact integrity, domain checks and model explanation are separate facts & P1 Graph's relation legend; P4 answer as agent interpretation \\
 \hline
-Versions are per object; a revision lands on the right object & No global scientific revision; a conflicting write returns the current version; a missing receipt is not permission to replay; an annotation names an exact version and later edits give ``version-differs'', not an automatic rebase & P1 revision on A@1; P4 retained discrepancy \\
+Versions are per object; a revision lands on the right object & No global scientific revision; a conflicting write returns the current version; a missing receipt is not permission to replay; an annotation names an exact version and later edits give ``version-differs'', not an automatic rebase & design; P4 retains a discrepancy and no case exercises a revision landing (Table~\ref{tab:mapping}) \\
 \hline
 Prepared, provided and read are different facts & A prepared context freezes the messages and their original object snapshots; reading records the fetching identity and separately reports an explicit linked reply; none proves understanding or completion & design \\
 \hline
 Access conditions enter the shared state & Five capability states are kept apart (presence, enablement, dependency readiness, method authorization, UI renderability); a missing view does not disable reading a table & P3 panel background; P4 unmapped transcript; P5 input history \\
 \hline
-Unknown stays unknown; nothing is replayed & Identity is a caller plus a request id; the same content under one identity is accepted once; a lost reply, timeout, refresh or crash never mints a new identity; a ``sent, no reply'' result is queried under the same identity & P1 run facts; the external session in Section~\ref{beyond} \\
+Unknown stays unknown; nothing is replayed & Identity is a caller plus a request id; the same content under one identity is accepted once; a lost reply, timeout, refresh or crash never mints a new identity; a ``sent, no reply'' result is queried under the same identity & design; the five analyses used native tools, so managed identity was not exercised \\
 \hline
 Local-first and agent-agnostic & The page is served from the machine at a loopback address; there is no Rho server; the browser has no shell, filesystem or Core access; the agent keeps its own permissions and managed execution is optional & the five analyses ran on native tools without managed execution \\
 \hline
