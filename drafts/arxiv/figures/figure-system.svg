@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="640" viewBox="0 0 1400 640">
+<rect width="1400" height="640" fill="#ffffff"/>
+<text x="32" y="52" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="38" font-weight="700" fill="#173c32">System and deployment</text>
+<text x="32" y="90" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="19" fill="#4b625a">Semantics belong to plugins; composition and routing to the application; one execution&#x27;s lifetime to Core</text>
+<line x1="32.0" y1="108.0" x2="1368.0" y2="108.0" stroke="#cfddd7" stroke-width="2" stroke-linecap="round"/>
+<rect x="56" y="134" width="400" height="200" rx="12" fill="#e7f2ec" stroke="#7ba596" stroke-width="2"/>
+<text x="256.0" y="176" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="26" font-weight="700" text-anchor="middle" fill="#173c32">Rho-plugins</text>
+<text x="256.0" y="208" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="21" font-weight="600" text-anchor="middle" fill="#3f7864">capability providers</text>
+<text x="256.0" y="242" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="20" text-anchor="middle" fill="#4b625a">R analysis · Agent bridge</text>
+<text x="256.0" y="267" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="20" text-anchor="middle" fill="#4b625a">tables &amp; plots · editor &amp; files</text>
+<text x="256.0" y="292" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="20" text-anchor="middle" fill="#4b625a">own semantics, native state,</text>
+<text x="256.0" y="317" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="20" text-anchor="middle" fill="#4b625a">provenance and results</text>
+<rect x="500" y="134" width="400" height="200" rx="12" fill="#e7f2ec" stroke="#7ba596" stroke-width="2"/>
+<text x="700.0" y="176" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="26" font-weight="700" text-anchor="middle" fill="#173c32">Rho application</text>
+<text x="700.0" y="208" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="21" font-weight="600" text-anchor="middle" fill="#3f7864">organizer</text>
+<text x="700.0" y="242" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="20" text-anchor="middle" fill="#4b625a">select &amp; assemble · layout</text>
+<text x="700.0" y="267" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="20" text-anchor="middle" fill="#4b625a">shared interaction routing</text>
+<text x="700.0" y="292" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="20" text-anchor="middle" fill="#4b625a">and presentation</text>
+<rect x="944" y="134" width="400" height="200" rx="12" fill="#e7f2ec" stroke="#7ba596" stroke-width="2"/>
+<text x="1144.0" y="176" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="26" font-weight="700" text-anchor="middle" fill="#173c32">Rho-core</text>
+<text x="1144.0" y="208" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="21" font-weight="600" text-anchor="middle" fill="#3f7864">optional managed execution</text>
+<text x="1144.0" y="242" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="20" text-anchor="middle" fill="#4b625a">request identity · retained</text>
+<text x="1144.0" y="267" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="20" text-anchor="middle" fill="#4b625a">execution facts · resident Host</text>
+<text x="1144.0" y="292" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="20" text-anchor="middle" fill="#4b625a">not on every path</text>
+<line x1="465.0" y1="234.0" x2="491.0" y2="234.0" stroke="#3f7864" stroke-width="3" stroke-linecap="round"/>
+<polygon points="500.0,234.0 490.0,239.0 490.0,229.0" fill="#3f7864"/>
+<polygon points="456.0,234.0 466.0,229.0 466.0,239.0" fill="#3f7864"/>
+<line x1="909.0" y1="234.0" x2="935.0" y2="234.0" stroke="#3f7864" stroke-width="3" stroke-linecap="round"/>
+<polygon points="944.0,234.0 934.0,239.0 934.0,229.0" fill="#3f7864"/>
+<polygon points="900.0,234.0 910.0,229.0 910.0,239.0" fill="#3f7864"/>
+<rect x="56" y="382" width="1288" height="128" rx="12" fill="#e7f2ec" stroke="#7ba596" stroke-width="2"/>
+<text x="82" y="422" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="26" font-weight="700" fill="#173c32">Shared state</text>
+<text x="82" y="454" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="20" fill="#4b625a">actions · resources · selections · views — each with owner, version and provenance</text>
+<text x="82" y="478" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="20" fill="#4b625a">observed computation fact    |    agent interpretation    |    human judgment</text>
+<text x="82" y="502" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="18" fill="#3f7864">local service on the machine  ·  no Rho server  ·  the browser has no shell, filesystem or Core access</text>
+<line x1="256.0" y1="334.0" x2="256.0" y2="373.9" stroke="#7ba596" stroke-width="2.3" stroke-linecap="round"/>
+<polygon points="256.0,382.0 251.5,373.0 260.5,373.0" fill="#7ba596"/>
+<line x1="700.0" y1="334.0" x2="700.0" y2="373.9" stroke="#7ba596" stroke-width="2.3" stroke-linecap="round"/>
+<polygon points="700.0,382.0 695.5,373.0 704.5,373.0" fill="#7ba596"/>
+<line x1="1144.0" y1="334.0" x2="1144.0" y2="373.9" stroke="#7ba596" stroke-width="2.3" stroke-linecap="round"/>
+<polygon points="1144.0,382.0 1139.5,373.0 1148.5,373.0" fill="#7ba596"/>
+<rect x="56" y="548" width="240" height="84" rx="12" fill="#e7f2ec" stroke="#7ba596" stroke-width="2"/>
+<text x="176.0" y="599.0" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="25" font-weight="700" text-anchor="middle" fill="#173c32">Researcher</text>
+<rect x="1104" y="548" width="240" height="84" rx="12" fill="#e7f2ec" stroke="#7ba596" stroke-width="2"/>
+<text x="1224.0" y="599.0" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="25" font-weight="700" text-anchor="middle" fill="#173c32">Agent</text>
+<line x1="176.0" y1="548.0" x2="176.0" y2="519.9" stroke="#3f7864" stroke-width="3.2" stroke-linecap="round"/>
+<polygon points="176.0,510.0 181.5,521.0 170.5,521.0" fill="#3f7864"/>
+<line x1="1224.0" y1="548.0" x2="1224.0" y2="519.9" stroke="#3f7864" stroke-width="3.2" stroke-linecap="round"/>
+<polygon points="1224.0,510.0 1229.5,521.0 1218.5,521.0" fill="#3f7864"/>
+<text x="700.0" y="532" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="20" font-weight="600" text-anchor="middle" fill="#3f7864">two entrances read and write the same actions and resources</text>
+</svg>

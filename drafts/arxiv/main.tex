@@ -47,7 +47,14 @@ The proposed contribution is therefore a method, not a particular screen or a mo
   \item \textbf{A positioning.} We compare the method directly with the closest work, stating for each what it already provides, what this paper adds and what it does not claim, and identify the one question that those precedents leave open.
 \end{enumerate}
 
-This is a design and method contribution, not an evaluation: no experiment and no user study were run. The five analyses illustrate interface behaviour under one configuration; they are selected expression-analysis tasks, not complete reproductions of their source studies, and they do not establish improved understanding, a comparison against other systems, or the scientific validity of any individual analysis. Section~\ref{method} states the method; Section~\ref{system} describes the architecture; Section~\ref{episodes} reports the analyses; Section~\ref{discussion} sets the boundary and the criteria under which the claim fails.
+This is a design and method contribution, not an evaluation: no experiment and no user study were run. The five analyses illustrate interface behaviour under one configuration; they are selected expression-analysis tasks, not complete reproductions of their source studies, and they do not establish improved understanding, a comparison against other systems, or the scientific validity of any individual analysis. Section~\ref{method} states the method; Section~\ref{system} describes the architecture; Section~\ref{episodes} reports the analyses; Section~\ref{discussion} sets the boundary and the criteria under which the claim fails. Figure~\ref{fig:argument} states the argument; Figure~\ref{fig:system} the system that carries it; Figures~\ref{fig:p1judgment} and~\ref{fig:cases} the evidence.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/figure-argument.png}
+\caption{\textbf{The argument.} (A) A judgment whose materials are scattered across conversations, notebooks, figures and logs, while the agent's context is a transcript rather than the structure the researcher is reading. (B) The materials are organized by the current purpose. (C) The organization is one shared state that the person reads and revises and the agent continues from. The protocol invariants that make these distinctions checkable are stated in Table~\ref{tab:argument}.}
+\label{fig:argument}
+\end{figure}
 
 \section{Related work}\label{related-work}
 
@@ -180,15 +187,15 @@ Protocol records: the \href{https://github.com/YuLab-SMU/Rho/blob/main/docs/COLL
 
 \subsection{Three layers and four shared concepts}\label{layers}
 
-Rho separates three layers (Figure~\ref{fig:architecture}, panel A). The \textbf{application container} selects and assembles components, and owns layout and shared interaction routing and presentation. \textbf{Functional components (plugins)} are the capability providers---an R analysis, an agent bridge, a table, a plot, an editor or a file tool---and own semantics, native state, artifacts, provenance and results. \textbf{Rho-core} supplies optional managed execution: original request identity and deduplication, retained execution facts, a resident Host and a public CLI. Core is not a prerequisite for an agent computation and is not on every path; an agent normally uses its native tools with existing permissions, and managed execution is selected only for a concrete need such as execution continuity or a retained record. During the five analyses reported in Section~\ref{episodes}, managed execution was unavailable: they ran through the shared Notebook kernel on the agent's native tools, so they exercise the workspace views and the shared session, not the optional managed-execution path. Rho is a local service with a browser interface: the page is served from the machine at a loopback address, there is no Rho server, and the browser has no shell, filesystem or Core access of its own---it calls named scoped operations on the local service. A project stays an ordinary folder, an agent client keeps its own permissions, and the scientific materials stay on the machine.
+The method needs a carrier: Rho separates three layers (Figure~\ref{fig:system}). The \textbf{application container} selects and assembles components, and owns layout and shared interaction routing and presentation. \textbf{Functional components (plugins)} are the capability providers---an R analysis, an agent bridge, a table, a plot, an editor or a file tool---and own semantics, native state, artifacts, provenance and results. \textbf{Rho-core} supplies optional managed execution: original request identity and deduplication, retained execution facts, a resident Host and a public CLI. Core is not a prerequisite for an agent computation and is not on every path; an agent normally uses its native tools with existing permissions, and managed execution is selected only for a concrete need such as execution continuity or a retained record. During the five analyses reported in Section~\ref{episodes}, managed execution was unavailable: they ran through the shared Notebook kernel on the agent's native tools, so they exercise the workspace views and the shared session, not the optional managed-execution path. Rho is a local service with a browser interface: the page is served from the machine at a loopback address, there is no Rho server, and the browser has no shell, filesystem or Core access of its own---it calls named scoped operations on the local service. A project stays an ordinary folder, an agent client keeps its own permissions, and the scientific materials stay on the machine.
 
-Four concepts connect components to the container: an \textbf{action} (identity, typed inputs, preconditions, effects, results and cancellation semantics); a \textbf{resource} (an owner-provided reference to a file, table, plot, model or task, with provenance and the content version it needs); a \textbf{selection} (stable entities or ranges in a particular resource version); and a \textbf{view} (presentation of resources, registered actions and observation subscriptions). Agent tools, UI controls and CLI adapters reach the same component action, so a person and an agent reach the same capabilities and resources through different entrances. In the design, the shared state the method relies on is this body of actions, resources, selections and views, each with an owner, a version, and a provenance whose source is an observed computation fact, an agent interpretation, or a human judgment (Figure~\ref{fig:architecture}, panel B). Two facts the figure keeps apart: component semantics belong to the plugin, composition and routing to the application, and a single execution's lifetime to Core; and a displayed relationship is not by itself proof that a scientific claim is correct. The five analyses below instantiate views and resources over a shared Notebook session; they do not exercise the full action and selection contract described here.
+Four concepts connect components to the container: an \textbf{action} (identity, typed inputs, preconditions, effects, results and cancellation semantics); a \textbf{resource} (an owner-provided reference to a file, table, plot, model or task, with provenance and the content version it needs); a \textbf{selection} (stable entities or ranges in a particular resource version); and a \textbf{view} (presentation of resources, registered actions and observation subscriptions). Agent tools, UI controls and CLI adapters reach the same component action, so a person and an agent reach the same capabilities and resources through different entrances. In the design, the shared state the method relies on is this body of actions, resources, selections and views, each with an owner, a version, and a provenance whose source is an observed computation fact, an agent interpretation, or a human judgment (Figure~\ref{fig:argument}C). Two facts the figure keeps apart: component semantics belong to the plugin, composition and routing to the application, and a single execution's lifetime to Core; and a displayed relationship is not by itself proof that a scientific claim is correct. The five analyses below instantiate views and resources over a shared Notebook session; they do not exercise the full action and selection contract described here.
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.96\textwidth]{figures/figure-architecture.pdf}
-\caption{\textbf{Rho's architecture and the analysis round-trip.} (A) Three layers---the application container that composes and routes, functional components that own capability and semantics, and optional managed execution---with the researcher and the agent reaching one body of actions and resources, and the shared state carrying each object's owner, version and provenance. (B) The method as a round-trip: a scientific purpose forms an organization plan, which becomes an operable interface; human reading and revision and agent continuation both act on one shared state, whose contents are distinguished by source and versioned per object, and new results drive re-organization, summarized at its centre by the invariants that make each link checkable (identity, per-object version, protection, selection scope). Panel A also notes the deployment form: the service is local, there is no Rho server, and the browser has no shell, filesystem or Core access. The analyses in Section~\ref{episodes} used the workspace views over a shared Notebook session and did not exercise the optional managed-execution path.}
-\label{fig:architecture}
+\includegraphics[width=0.96\textwidth]{figures/figure-system.pdf}
+\caption{\textbf{System and deployment.} Semantics stay with capability providers (R analysis, the agent bridge, tables, plots, editors), composition and routing with the application, and one execution's lifetime with an optional core; the researcher and the agent reach the same actions and resources. The service is local: there is no Rho server, and the browser has no shell, filesystem or Core access.}
+\label{fig:system}
 \end{figure}
 
 These boundaries have a practical consequence for the method. Because the application composes views and routes actions but does not re-implement a component's behavior, the same analysis objects can appear in different views without a second source of truth. Because Core is optional, an analysis can run with the agent's native tools while still being observed and represented in the shared state. And because a missing component is reported unavailable rather than silently installed, the interface can state a gap instead of hiding it.
@@ -249,33 +256,26 @@ P5 & Distinguishing a paired comparison from a different question; sensitivity t
 
 \section{Illustrative analyses}\label{episodes}
 
-Across the five cases the round-trip is uneven, and Table~\ref{tab:mapping} marks which part of the method each case illustrates. None of the five closes a human revision into an agent continuation; that part of the design is described in Section~\ref{system} and is demonstrated, as a separate episode, in Section~\ref{beyond}.
+Across the five cases the round-trip is uneven, and Table~\ref{tab:mapping} marks which part of the method each case illustrates. We report P1 in depth, because it exercises the workspace views and shows one judgment made inspectable (Figure~\ref{fig:p1judgment}); the other four are reported more briefly as a set of judgments that turn on different material relations (Figure~\ref{fig:cases}). None of the five closes a human revision into an agent continuation; that part of the design is described in Section~\ref{system} and is demonstrated, as a separate episode, in Section~\ref{beyond}.
 
 \subsection{P1. A discrepancy in tauopathy bulk RNA-seq}\label{p1.-a-discrepancy-in-tauopathy-bulk-rna-seq}
 
 The first project started from a published bulk RNA-seq study of chromogranin A and tauopathy and its GEO data \cite{jati2025}. The requested task was narrower than reproducing the paper: recompute specified differential-expression and reversal counts, perform GO biological-process enrichment, and record outputs and choices. The public data had been downloaded before the run. A local project README stated the comparisons and expected files; the 17 samples comprised five wild-type, six hTau and six CgA-KO/hTau samples. The agent executed R code in Rho's shared Notebook session, using two pairwise DESeq2 contrasts with nominal P \textless{} 0.01 and \textbar log2 fold change\textbar{} \textgreater{} 0.5.
 
-The first result was a discrepancy, not a confirmation. The local run reported 1,096 up- and 1,549 down-regulated genes for the first contrast, versus 1,193 and 869 reported in the task's comparison with the paper. The reversal counts were 334 and 551, versus 417 and 293. The recorded analysis retained alternative reversal definitions in a separate table. These counts describe one run and one comparison; they do not establish why the published numbers differed, nor do they establish which definition is scientifically correct. Figure~\ref{fig:p1counts} sets the two sets of counts side by side.
+The first result was a discrepancy, not a confirmation. The local run reported 1,096 up- and 1,549 down-regulated genes for the first contrast, versus 1,193 and 869 reported in the task's comparison with the paper. The reversal counts were 334 and 551, versus 417 and 293. The recorded analysis retained alternative reversal definitions in a separate table. These counts describe one run and one comparison; they do not establish why the published numbers differed, nor do they establish which definition is scientifically correct. Figure~\ref{fig:p1judgment}B sets the two sets of counts side by side.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.82\linewidth]{figures/figure-p1-counts.pdf}
-\caption{\textbf{P1 recomputed versus reported counts.} The local run and the task's comparison with the published study differ in both directions and in the two reversal definitions. The chart redraws the counts given in the text; it is not a new analysis and does not explain the difference.}
-\label{fig:p1counts}
+\includegraphics[width=0.98\textwidth]{figures/figure-p1-judgment.png}
+\caption{\textbf{One P1 judgment, made inspectable.} (A) The claim and the materials it rests on: the contrast, the samples, the model, the run and the version. (B) The recomputed and reported counts, which make inspection necessary. (C) The real Notebook session: an agent-attributed cell and its reported counts. The judgment is inspectable because these materials and versions are explicit, not because its counts are right.}
+\label{fig:p1judgment}
 \end{figure}
 
 The discrepancy changes what the researcher needs to inspect. Rather than asking only whether the run produced a figure, the researcher can ask which samples and contrast were used, how reversal was defined, which choices affected the counts, and whether those choices match the published analysis. This is the method's first operation made concrete: the purpose is not ``produce a figure'' but ``explain a difference'', and the organization must keep the computation and its materials available for that investigation.
 
 \subsubsection{Inspecting the computation}\label{inspecting-the-computation}
 
-Figure~\ref{fig:notebook} shows two regions of the P1 Notebook capture: the agent-attributed R cell and its reported output.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.72\linewidth]{figures/figure-p1-anchor.png}
-\caption{\textbf{A region of the P1 Notebook.} (A) An R cell attributed to Claude Code, with its stated purpose and elapsed time; (B) the reported up- and down-regulated and reversal counts, followed by a gene-mapping warning. Cropped from a single capture taken during the local application test of Rho 0.5.2; the full capture, including the live Variables pane, is Figure~S1.}
-\label{fig:notebook}
-\end{figure}
+Figure~\ref{fig:p1judgment}C shows two regions of the P1 Notebook capture: the agent-attributed R cell and its reported output.
 
 The Notebook made it possible to inspect an agent-attributed cell alongside its output. The same session also held data frames, plotting objects and enrichment results (Figure~S1). This is an observed property of the run, not evidence that the analysis was correct or that the person understood it.
 
@@ -287,16 +287,16 @@ Studio identifies the data and method, lists files, and preserves the unresolved
 
 \FloatBarrier
 
-\subsection{P2. Single-nucleus data: is the biological replicate the sample?}\label{p2}
-
-The second project used hippocampal single-nucleus data from a study of neuronal APOE4 removal \cite{koutsodendris2023} (GEO GSE221215). The local task began with 11 samples and retained 92,597 nuclei after quality control; the agent clustered the nuclei and assigned coarse cell classes, 8,364 of which remained unresolved. These labels are working annotations, not independently validated cell identities. The saved embedding and per-sample quality-control table are in Figure~S4.
-
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\linewidth]{figures/figure-casecards.pdf}
-\caption{\textbf{Two further cases and what each opened.} (left) P2 turns on whether the biological replicate is the sample or the cell; (right) P5 turns on what a patient-paired comparison can support. Each card lists the question, the materials the interface had to organize, and what the case opened; neither case exercises a revision or an agent continuation.}
-\label{fig:casecards}
+\includegraphics[width=0.98\textwidth]{figures/figure-case-judgments.png}
+\caption{\textbf{Four further judgments.} P2--P5, each turning on a different material relation: the biological replicate, the compartment behind a pathway, the cause of a count difference, and what a paired comparison can support. The cards state what the interface exposed and what stayed open; none closes the round-trip.}
+\label{fig:cases}
 \end{figure}
+
+\subsection{P2. Single-nucleus data: is the biological replicate the sample?}\label{p2}
+
+The second project used hippocampal single-nucleus data from a study of neuronal APOE4 removal \cite{koutsodendris2023} (GEO GSE221215). The local task began with 11 samples and retained 92,597 nuclei after quality control; the agent clustered the nuclei and assigned coarse cell classes, 8,364 of which remained unresolved. These labels are working annotations, not independently validated cell identities. The saved embedding and per-sample quality-control table are in Figure~S4; Figure~\ref{fig:cases} (top left) states what the case exposed.
 
 The visual grouping opens a specific question. The local excitatory-neuron comparison contained 20,832 PS19-fE4 and 8,533 PS19-fE3 nuclei from four and three mice, respectively, and its cell-level Wilcoxon test did not model dependence among nuclei from the same mouse; a large number of nuclei is not the same replication as a large number of mice \cite{squair2021}. The per-sample table exposes sample contributions while the UMAP shows how the assigned classes occupy the embedding; neither establishes that the differential-expression list is reliable. The comparison also asks a different question from the study's central neuronal APOE4-deletion intervention, so the gene list was not compared with the paper's. A defensible continuation would validate the class labels, align the intended contrast with the study, and repeat the comparison with an appropriate sample-aware model. Rho makes the materials for that decision accessible; it does not supply the biological judgment.
 
@@ -304,14 +304,7 @@ The visual grouping opens a specific question. The local excitatory-neuron compa
 
 \subsection{P3. Spatial profiling: which compartment supports an explanation?}\label{p3}
 
-The third project used the GeoMx digital spatial profiling dataset GSE232853 from a diffuse large B-cell lymphoma study \cite{liu2024}. The local matrix contained 16,560 genes and 578 areas of illumination, including CD68- and CD20-selected segments. The task compared those two compartments, first checking marker expression and then fitting a limma model with \texttt{duplicateCorrelation} for paired segments, and it retained paired-only and unpaired alternatives so that the choice of comparison stayed inspectable (Figure~\ref{fig:p3}).
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.9\linewidth]{figures/figure-p3-pathway.png}
-\caption{\textbf{P3 Hallmark terms.} A redraw of the local Hallmark over-representation table: the 13 terms with Benjamini--Hochberg-adjusted P \textless{} 0.05. Point position is the recorded gene ratio, size the number of genes, colour the adjusted P. The redraw uses the same local table and is not a new enrichment analysis; the source table as it appeared in Studio is Figure~S5.}
-\label{fig:p3}
-\end{figure}
+The third project used the GeoMx digital spatial profiling dataset GSE232853 from a diffuse large B-cell lymphoma study \cite{liu2024}. The local matrix contained 16,560 genes and 578 areas of illumination, including CD68- and CD20-selected segments. The task compared those two compartments, first checking marker expression and then fitting a limma model with \texttt{duplicateCorrelation} for paired segments, and it retained paired-only and unpaired alternatives so that the choice of comparison stayed inspectable. The significant Hallmark terms are re-plotted in Figure~S9.
 
 At adjusted P \textless{} 0.05 and \textbar log2 fold change\textbar{} \textgreater{} 0.58, the main analysis reported 1,111 differentially expressed genes, of which 833 were higher in CD68 and 278 higher in CD20. An over-representation analysis of the combined list identified 13 significant Hallmark sets, including complement and interferon-gamma response. Because the analysis pooled both directions, an enriched term does not say which compartment drives it; the relevant next question is directional. The recorded panel background also matters: these results describe enrichment within the measured gene panel, not an unrestricted genome-wide universe. The local matrix did not include the spatial-region labels required for the original study's region-level comparison, so this is not a replication of the full spatial study.
 
@@ -319,14 +312,7 @@ At adjusted P \textless{} 0.05 and \textbar log2 fold change\textbar{} \textgrea
 
 \subsection{P4. Ageing endothelium: why do reported counts differ?}\label{p4}
 
-The fourth project examined the transcriptomic arm of an ageing study that also included metabolomics \cite{kiesworo2025} (GSE270697). The local analysis used three old and four young mouse skeletal-muscle endothelial samples; after transcript-to-gene mapping and filtering it fitted a limma--voom comparison. At BH-adjusted P \textless{} 0.05 and \textbar log2 fold change\textbar{} \textgreater{} 1 it reported 604 genes (370 higher and 234 lower in old samples), whereas the project records the paper's corresponding total as 500 (406 higher and 94 lower). These figures make the discrepancy visible without explaining it (Figure~\ref{fig:p4}).
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.82\linewidth]{figures/figure-p4-counts.pdf}
-\caption{\textbf{P4 recomputed versus reported counts.} The local run reports 604 genes (370 higher, 234 lower in old samples) against the paper's recorded 500 (406 higher, 94 lower). The chart redraws the counts given in the text; it is not a new analysis and does not identify the cause. The agent's overview and its selected pathways are Figure~S6.}
-\label{fig:p4}
-\end{figure}
+The fourth project examined the transcriptomic arm of an ageing study that also included metabolomics \cite{kiesworo2025} (GSE270697). The local analysis used three old and four young mouse skeletal-muscle endothelial samples; after transcript-to-gene mapping and filtering it fitted a limma--voom comparison. At BH-adjusted P \textless{} 0.05 and \textbar log2 fold change\textbar{} \textgreater{} 1 it reported 604 genes (370 higher and 234 lower in old samples), whereas the project records the paper's corresponding total as 500 (406 higher and 94 lower). These figures make the discrepancy visible without explaining it (Figure~S10).
 
 The saved choices identify several questions a reviewer can pursue: the local analysis used an Ensembl 102 transcript map and a particular expression filter where the paper used a different pipeline, and one transcript absent from the candidate annotations accounted for approximately 34\% of counts in each sample, with its effect on normalization unmeasured. These identify potential sources of difference, not a tested cause. The pathway view shows why the underlying table matters: KEGG oxidative phosphorylation had a negative normalized enrichment score ($-2.74$) for old versus young, and all terms in the displayed selection are lower in old samples, which should not be read as the direction of every significant pathway. The metabolomics arm was not analysed in this project.
 
@@ -334,7 +320,7 @@ The saved choices identify several questions a reviewer can pursue: the local an
 
 \subsection{P5. Patient transcriptomes: a paired comparison, not response prediction}\label{p5}
 
-The fifth project used the blood-expression component of a multi-omics mesothelioma study \cite{chin2025} (GSE252990). Its local matrix contained measurements from 40 patients at three time points; at baseline, 23 were recorded as responders and 17 as non-responders, whereas the study's phase II cohort was reported as 31 and 23. These are different scopes: the available matrix does not represent the entire 54-person cohort. Figure~\ref{fig:casecards} (right) summarizes the case; the saved result table is Figure~S7.
+The fifth project used the blood-expression component of a multi-omics mesothelioma study \cite{chin2025} (GSE252990). Its local matrix contained measurements from 40 patients at three time points; at baseline, 23 were recorded as responders and 17 as non-responders, whereas the study's phase II cohort was reported as 31 and 23. These are different scopes: the available matrix does not represent the entire 54-person cohort. Figure~\ref{fig:cases} (bottom right) summarizes the case; the saved result table is Figure~S7.
 
 For the on-treatment question, the analysis paired baseline and C3D1 samples from the same 40 patients using a patient-plus-time design. The available matrix contained continuous, apparently normalized values, so the main local analysis applied log2(x + 1) and limma \texttt{lmFit}/\texttt{eBayes} and reported 2,596 genes at BH-adjusted P \textless{} 0.05, while an alternative that applied voom directly to the supplied values reported 4,532. The contrast between outputs exposes sensitivity to input handling; it is not evidence that treating normalized values as counts is appropriate, or that either count is a verified biological finding. The pairing addresses within-patient change and asks a different question from baseline prediction of response, and it does not by itself distinguish treatment effects from other changes over time. The useful continuation is to establish the matrix's processing history, check the model and sample metadata, and compare the appropriate contrast with the original study.
 
@@ -378,7 +364,7 @@ The method carries concrete costs: the system may misread a purpose, select the 
 
 \subsection{Limitations and future evaluation}\label{limitations}
 
-The examples use one configuration and selected, pre-existing datasets. They do not compare Rho with an alternative interface, measure users' understanding or decision quality, or establish full reproduction of the source studies. The P2 cell classes and comparisons require sample-aware validation; P3's combined enrichment has no direction; P4's unexplained annotation loss and count discrepancy need further investigation; and P5 depends on input-processing choices. No single case provides evidence that Rho validates scientific conclusions, and independent researcher use has not been observed: the project's \href{https://github.com/YuLab-SMU/Rho/blob/main/docs/STATUS.md}{status} record makes no usability claim for the same reason. The checks in Section~\ref{checkable} are protocol-level: they show that a distinction is enforced by a mechanism, not that the mechanism improves a scientist's judgment. Those are different claims, and only the first is supported here.
+The examples use one configuration and selected, pre-existing datasets. They do not compare Rho with an alternative interface, measure users' understanding or decision quality, or establish full reproduction of the source studies; no benchmark of analysis outcomes is reported. The P2 cell classes and comparisons require sample-aware validation; P3's combined enrichment has no direction; P4's unexplained annotation loss and count discrepancy need further investigation; and P5 depends on input-processing choices. No single case provides evidence that Rho validates scientific conclusions, and independent researcher use has not been observed: the project's \href{https://github.com/YuLab-SMU/Rho/blob/main/docs/STATUS.md}{status} record makes no usability claim for the same reason. The checks in Section~\ref{checkable} are protocol-level: they show that a distinction is enforced by a mechanism, not that the mechanism improves a scientist's judgment. Those are different claims, and only the first is supported here.
 
 The next evidence should include an accessible, versioned record of each analysis; independent scientific review of the scripts, inputs and interpretations; and observations of researchers pursuing their own questions. A comparative study could test whether the interface helps people locate the evidence behind a claim, identify a discrepancy or choose a suitable next step. These remain research questions, not established outcomes of the present demonstrations.
 
