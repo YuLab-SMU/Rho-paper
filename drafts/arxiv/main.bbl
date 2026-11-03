@@ -12,12 +12,119 @@ Kazemitabaar et~al.
   with interactive task decomposition, 2024.
 \newblock UIST; arXiv:2407.02651v2; \url{https://arxiv.org/abs/2407.02651v2}.
 
+\bibitem{aichains}
+Wu, Terry, and Cai.
+\newblock {AI} chains: Transparent and controllable human-{AI} interaction by
+  chaining large language model prompts, 2022.
+\newblock CHI;
+  \url{https://www.cs.cmu.edu/~sherryw/assets/pubs/2022-chain.pdf}; DOI
+  10.1145/3491102.3517582.
+
+\bibitem{treadstone}
+Lee et~al.
+\newblock Treadstone: A social-media-inspired platform for multi-agent
+  collaborative data analysis, 2026.
+\newblock arXiv:2609.19774v1; \url{https://arxiv.org/abs/2609.19774v1}.
+
 \bibitem{insightlens}
 Weng et~al.
 \newblock {InsightLens}: Augmenting {LLM}-powered data analysis with
   interactive insight management and navigation, 2025.
 \newblock IEEE Transactions on Visualization and Computer Graphics;
   arXiv:2404.01644v2; \url{https://arxiv.org/abs/2404.01644v2}.
+
+\bibitem{loops}
+Eckelt et~al.
+\newblock Loops: Leveraging provenance and visualization to support exploratory
+  data analysis in notebooks, 2024.
+\newblock IEEE VIS; \url{https://eckelt.info/papers/2024_loops.pdf}.
+
+\bibitem{analyticprovenance}
+Xu et~al.
+\newblock Analytic provenance for sensemaking: A research agenda, 2015.
+\newblock IEEE Computer Graphics and Applications 35(3);
+  \url{https://openaccess.city.ac.uk/id/eprint/15535/}; DOI
+  10.1109/MCG.2015.50.
+
+\bibitem{mycelium}
+Choudhury et~al.
+\newblock Networked intelligence: Active shared context graphs for human-{AI}
+  team science, 2026.
+\newblock arXiv:2607.13220v1; \url{https://arxiv.org/abs/2607.13220v1}.
+
+\bibitem{semv}
+Nguyen et~al.
+\newblock Self-evolving multimedia verification through memory consolidation of
+  contestation experiences, 2026.
+\newblock arXiv:2609.27175v1; \url{https://arxiv.org/abs/2609.27175v1}.
+
+\bibitem{memorysandbox}
+Huang, Gutierrez, Kamana, and MacNeil.
+\newblock Memory sandbox: Transparent and interactive memory management for
+  conversational agents, 2023.
+\newblock arXiv:2308.01542v1; \url{https://arxiv.org/abs/2308.01542v1}.
+
+\bibitem{cotomi}
+Oyamada et~al.
+\newblock cotomi {Act}: Learning to automate work by watching you, 2026.
+\newblock CAIS 2026; arXiv:2605.03231v1;
+  \url{https://arxiv.org/abs/2605.03231v1}.
+
+\bibitem{memgpt}
+Packer et~al.
+\newblock {MemGPT}: Towards {LLMs} as operating systems, 2023.
+\newblock arXiv:2310.08560v1; \url{https://arxiv.org/abs/2310.08560v1}.
+
+\bibitem{prov}
+{W3C}.
+\newblock {PROV-DM}: The {PROV} data model, 2013.
+\newblock W3C Recommendation;
+  \url{https://www.w3.org/TR/2013/REC-prov-dm-20130430/}.
+
+\bibitem{evi}
+Al~Manir and Clark.
+\newblock {EVI}: Evidence graph ontology, 2026.
+\newblock Version 1.6, 2026-08-13;
+  \url{https://fairscape.github.io/EVI/index.html}.
+
+\bibitem{squair2021}
+Jordan~W. Squair et~al.
+\newblock Confronting false discoveries in single-cell differential expression.
+\newblock {\em Nature Communications}, 12:5692, 2021.
+\newblock \url{https://doi.org/10.1038/s41467-021-25960-2}.
+
+\bibitem{trustworthy}
+Ang et~al.
+\newblock Trustworthy agentic {AI} in bioinformatics: From workflow automation
+  to traceable and validated biological inference, 2026.
+\newblock Biology 15(17), 1537;
+  \url{https://pmc.ncbi.nlm.nih.gov/articles/PMC13565537/}.
+
+\bibitem{tisane}
+Jun, Seo, Heer, and Just.
+\newblock Tisane: Authoring statistical models via formal reasoning from
+  conceptual and data relationships, 2022.
+\newblock CHI; arXiv:2201.02705v1; \url{https://arxiv.org/abs/2201.02705v1}.
+
+\bibitem{rtisan}
+Jun, Misback, Heer, and Just.
+\newblock {rTisane}: Externalizing conceptual models for data analysis prompts
+  reconsideration of domain assumptions and facilitates statistical modeling,
+  2024.
+\newblock CHI; \url{https://idl.uw.edu/papers/rtisane}; DOI
+  10.1145/3613904.3642267.
+
+\bibitem{galaxy}
+{Galaxy Project}.
+\newblock Galaxy job configuration, 2026.
+\newblock Release 25.1 documentation;
+  \url{https://docs.galaxyproject.org/en/release_25.1/admin/jobs.html}.
+
+\bibitem{jupyterlab}
+{JupyterLab}.
+\newblock Common extension points, 2026.
+\newblock 4.4.x documentation;
+  \url{https://jupyterlab.readthedocs.io/en/4.4.x/extension/extension_points.html}.
 
 \bibitem{dynavis}
 Vaithilingam et~al.
@@ -37,29 +144,10 @@ Wang et~al.
   {AI}, 2024.
 \newblock arXiv:2408.16119v1; \url{https://arxiv.org/abs/2408.16119v1}.
 
-\bibitem{mycelium}
-Choudhury et~al.
-\newblock Networked intelligence: Active shared context graphs for human-{AI}
-  team science, 2026.
-\newblock arXiv:2607.13220v1; \url{https://arxiv.org/abs/2607.13220v1}.
-
-\bibitem{semv}
-Nguyen et~al.
-\newblock Self-evolving multimedia verification through memory consolidation of
-  contestation experiences, 2026.
-\newblock arXiv:2609.27175v1; \url{https://arxiv.org/abs/2609.27175v1}.
-
-\bibitem{prov}
-{W3C}.
-\newblock {PROV-DM}: The {PROV} data model, 2013.
-\newblock W3C Recommendation;
-  \url{https://www.w3.org/TR/2013/REC-prov-dm-20130430/}.
-
-\bibitem{tisane}
-Jun, Seo, Heer, and Just.
-\newblock Tisane: Authoring statistical models via formal reasoning from
-  conceptual and data relationships, 2022.
-\newblock CHI; arXiv:2201.02705v1; \url{https://arxiv.org/abs/2201.02705v1}.
+\bibitem{generativeui}
+Leviathan et~al.
+\newblock Generative {UI}: {LLMs} are effective {UI} generators, 2026.
+\newblock arXiv:2604.09577v1; \url{https://arxiv.org/abs/2604.09577v1}.
 
 \bibitem{jati2025}
 S.~Jati et~al.
@@ -74,12 +162,6 @@ N.~Koutsodendris et~al.
   neurodegeneration and myelin deficits.
 \newblock {\em Nature Aging}, 2023.
 \newblock \url{https://pubmed.ncbi.nlm.nih.gov/37118426/}.
-
-\bibitem{squair2021}
-Jordan~W. Squair et~al.
-\newblock Confronting false discoveries in single-cell differential expression.
-\newblock {\em Nature Communications}, 12:5692, 2021.
-\newblock \url{https://doi.org/10.1038/s41467-021-25960-2}.
 
 \bibitem{liu2024}
 M.~Liu et~al.

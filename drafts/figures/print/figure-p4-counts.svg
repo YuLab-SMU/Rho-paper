@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="560" viewBox="0 0 1000 560">
+<rect width="1000" height="560" fill="#ffffff"/>
+<text x="24" y="46" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="30" font-weight="700" fill="#173c32">P4 — recomputed vs reported counts</text>
+<text x="24" y="80" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="18" fill="#4b625a">Three old vs four young samples, BH-adjusted P&lt;0.05 and |log2FC|&gt;1.</text>
+<line x1="100" y1="430.0" x2="968" y2="430.0" stroke="#dfe7e3" stroke-width="1.2"/>
+<text x="88" y="436.0" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="17" text-anchor="end" fill="#4b625a">0</text>
+<line x1="100" y1="354.5" x2="968" y2="354.5" stroke="#dfe7e3" stroke-width="1.2"/>
+<text x="88" y="360.5" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="17" text-anchor="end" fill="#4b625a">200</text>
+<line x1="100" y1="279.0" x2="968" y2="279.0" stroke="#dfe7e3" stroke-width="1.2"/>
+<text x="88" y="285.0" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="17" text-anchor="end" fill="#4b625a">400</text>
+<line x1="100" y1="203.5" x2="968" y2="203.5" stroke="#dfe7e3" stroke-width="1.2"/>
+<text x="88" y="209.5" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="17" text-anchor="end" fill="#4b625a">600</text>
+<line x1="100" y1="128.0" x2="968" y2="128.0" stroke="#dfe7e3" stroke-width="1.2"/>
+<text x="88" y="134.0" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="17" text-anchor="end" fill="#4b625a">800</text>
+<text x="28" y="120" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="17" fill="#4b625a">genes</text>
+<rect x="154.86666666666667" y="290.325" width="86.8" height="139.675" rx="2" fill="#3f7864" stroke="none" stroke-width="2"/>
+<text x="198.26666666666668" y="282.325" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="17" font-weight="700" text-anchor="middle" fill="#173c32">370</text>
+<rect x="247.66666666666669" y="276.735" width="86.8" height="153.265" rx="2" fill="#c0875c" stroke="none" stroke-width="2"/>
+<text x="291.06666666666666" y="268.735" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="17" font-weight="700" text-anchor="middle" fill="#173c32">406</text>
+<text x="244.66666666666666" y="458" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="17" text-anchor="middle" fill="#4b625a">Up</text>
+<rect x="444.2" y="341.665" width="86.8" height="88.335" rx="2" fill="#3f7864" stroke="none" stroke-width="2"/>
+<text x="487.59999999999997" y="333.665" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="17" font-weight="700" text-anchor="middle" fill="#173c32">234</text>
+<rect x="537.0" y="394.515" width="86.8" height="35.485" rx="2" fill="#c0875c" stroke="none" stroke-width="2"/>
+<text x="580.4" y="386.515" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="17" font-weight="700" text-anchor="middle" fill="#173c32">94</text>
+<text x="534.0" y="458" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="17" text-anchor="middle" fill="#4b625a">Down</text>
+<rect x="733.5333333333333" y="201.99" width="86.8" height="228.01" rx="2" fill="#3f7864" stroke="none" stroke-width="2"/>
+<text x="776.9333333333333" y="193.99" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="17" font-weight="700" text-anchor="middle" fill="#173c32">604</text>
+<rect x="826.3333333333333" y="241.25" width="86.8" height="188.75" rx="2" fill="#c0875c" stroke="none" stroke-width="2"/>
+<text x="869.7333333333332" y="233.25" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="17" font-weight="700" text-anchor="middle" fill="#173c32">500</text>
+<text x="823.3333333333333" y="458" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="17" text-anchor="middle" fill="#4b625a">Total</text>
+<rect x="640" y="88" width="16" height="16" rx="2" fill="#3f7864" stroke="none" stroke-width="2"/>
+<text x="664" y="102" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="17" fill="#4b625a">this run</text>
+<rect x="770" y="88" width="16" height="16" rx="2" fill="#c0875c" stroke="none" stroke-width="2"/>
+<text x="794" y="102" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif" font-size="17" fill="#4b625a">reported</text>
+</svg>

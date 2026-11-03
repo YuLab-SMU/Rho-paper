@@ -1,3 +1,4 @@
+\pdfminorversion=7
 \documentclass[11pt]{article}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -8,10 +9,11 @@
 \usepackage{amsmath}
 \usepackage{microtype}
 \usepackage{placeins}
+\usepackage{float}
 \usepackage{xurl}
 \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
 \setlength{\emergencystretch}{3em}
-\title{Rho: A Human--AI Collaborative Interface for Discovering Questions and Testing Explanations}
+\title{Rho: A Purpose-Driven Workspace for Human--AI Collaborative Analysis}
 \author{%
   Yonghe Xia$^{1}$ \quad Guangchuang Yu$^{2,*}$\\[0.5em]
   \small $^{1}$School of Medicine, Westlake University, Hangzhou, China\\
@@ -24,7 +26,7 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-Data analysis rarely ends with the first figure or a single answer. A result can raise a new question, disagree with a published analysis, or expose a choice that must be revisited before an explanation is credible. When an AI agent performs the computation, the researcher must also be able to inspect what ran, which objects and outputs are available, and how a reported finding relates to them. We present Rho, a human--AI collaborative interface that brings an agent, a shared computational session, project materials, and views of an analysis process into the same workspace. Rho is designed to support a cycle in which people and agents formulate questions, produce and inspect results, and revise or continue an analysis. We illustrate the interface using five locally run analyses based on public datasets from published studies. These examples cover selected expression-analysis tasks, not complete reproductions of the studies. In one bulk RNA-seq case, the recovered differential-expression counts differed from the published counts; Rho displayed the analysis, outputs, notes, and reported choices for inspection. A single-nucleus case brings sample-level replication and cell annotations into view as questions for further analysis. The observations demonstrate concrete interface behaviour under one configuration, while leaving usability, comparative benefit, and the scientific validity of individual analyses to further evaluation.
+Data analysis in bioinformatics rarely ends with the first figure or a single answer. A result can raise a new question, disagree with a published analysis, or turn on a choice---the comparison, the observation unit, the version of an input---that must be revisited before an explanation is credible. When an AI agent performs the computation, the researcher must still judge whether a comparison answers the intended question, whether the unit of replication is the biological sample or the cell, which run produced a result, and what evidence can support a claim. These judgments need materials that are usually scattered across conversations, notebooks, figures, run logs and notes, while the agent's context is a transcript rather than the structure the researcher is actually reading. We present Rho, a human--AI collaborative analysis environment that organizes materials by the current scientific purpose: it selects or obtains the materials a judgment needs, declares the relations they serve, composes operable views, and makes this organization a shared state that is at once the researcher's reading interface and the agent's continuation context. We present the design in three parts: a method object---the operations that form a round-trip and the kinds of state that must stay distinct; a three-layer architecture that separates capability providers from the application that composes them; and five illustrative analyses on public data. In a bulk RNA-seq case the recomputed counts differed from the published counts and the interface kept the computation, the choices and the discrepancy available for inspection; a single-nucleus case makes sample-level replication visible behind a cell-level comparison. Under one configuration these analyses show how the design behaves in practice; we present the work as a design contribution rather than an evaluation, and usability, comparative benefit and the scientific validity of individual analyses remain to be evaluated.
 \end{abstract}
 
 \section{Introduction}\label{introduction}
@@ -33,35 +35,173 @@ An analysis becomes interesting when its first result is not the end of the ques
 
 AI agents can write code and run analyses, but their outputs do not remove this need. An agent's answer may summarize a result without exposing the observation unit, a changed input, or the analysis choices behind it. A conversation transcript can preserve the sequence of messages while leaving the researcher to reconstruct how a claim, file, calculation, and decision relate. Conversely, an analysis interface may make a figure visible without making the agent's computational state or subsequent context accessible.
 
-Rho approaches this problem as a shared working environment. An agent can execute R code in a Notebook session that the person can also inspect and use. Project notes, files, variables, outputs, and views of the process provide entry points into the work. Studio brings materials from a conversation together for review; Graph presents relationships recorded or observed from different sources. These representations support inspection, but a displayed relationship is not itself proof that a scientific claim is correct or that an agent has incorporated every change.
+Two default arrangements do not answer this directly. One gives the interface to a workflow fixed at design time: views and controls are decided in advance and filled with content at run time. It is stable, but its organization is unrelated to a particular judgment---judging whether a difference is consistent across donors and judging why a computation did not finish show the same set of views. The other gives the process to a conversation: the agent writes, runs and explains, and the person reads the reply. It is flexible, but the material it forms is a byproduct of the dialogue; a person can read an explanation but cannot easily retrieve the material it rests on, and the agent's next step depends mainly on the transcript rather than on the object the researcher is now examining.
 
-We use \emph{discovering questions} broadly: a question may be supplied by the researcher, emerge from a discrepancy, or follow from an incomplete result. \emph{Testing explanations} means making an explanation answerable to particular results and analysis choices; it does not mean that the interface can validate a biological mechanism by itself. Our aim is to make the movement between question, computation, result, and interpretation a visible part of collaborative analysis.
+Rho takes a third position: it makes the current scientific purpose the organizing principle, forms a working interface from it, and treats the organization itself as a fact shared by the person and the agent. The system obtains or selects the materials a judgment needs, states what each one contributes, composes the applicable views and operations, and points out what is still missing; the researcher reads, compares and revises within it, the agent continues from the same representation with its objects, scope and actual compute conditions, and new results return to the corresponding judgment. We use \emph{discovering questions} broadly: a question may be supplied by the researcher, emerge from a discrepancy, or follow from an incomplete result. \emph{Testing explanations} means making an explanation answerable to particular results and analysis choices; it does not mean that the interface can validate a biological mechanism by itself.
 
-This paper makes three contributions. First, it describes Rho as an interface that connects agent work with a shared analysis session and inspectable project materials. Second, it develops concrete cases in which a published-result discrepancy, a single-nucleus comparison, and alternative analytical choices give the researcher different reasons to inspect or continue the work. Third, it illustrates the interface with five selected analyses using public data from published studies. These observations are not evidence of improved understanding, a comparison against other systems, or a user study.
+The proposed contribution is therefore a method, not a particular screen or a model capability: given the current scientific purpose and the capabilities actually connected, select or obtain materials from an ongoing analysis, organize their relations, and compose operable views, such that this organization is simultaneously the researcher's interface for understanding the analysis and the agent's shared context for continuing it, and is revised as human judgment and new results arrive. The paper makes three contributions.
+
+\begin{enumerate}
+  \item \textbf{A method object.} We express ``purpose $\rightarrow$ organization plan $\rightarrow$ operable interface $\rightarrow$ sourced shared state $\rightarrow$ agent continuation'' as a set of checkable objects and operations, in which every step states its basis, gaps and version. Five operations form one round-trip; three kinds of change (layout, focus and analysis scope) must remain distinguishable; the shared state separates three sources (observed computation fact, agent interpretation, human judgment) and versions each object separately. A capability provider supplies information, compute and views; the organizer decides how they are composed.
+  \item \textbf{A system and five illustrative analyses.} Rho realizes this method in a three-layer architecture---application container, functional components and optional managed execution---connected by four shared concepts (action, resource, selection, view). We report five analyses on public data that illustrate different parts of the design under one configuration: a bulk RNA-seq discrepancy, a single-nucleus replication question, a spatial compartment comparison, an ageing-endothelium count discrepancy, and a patient-paired transcriptome comparison.
+  \item \textbf{A positioning.} We compare the method directly with the closest work, stating for each what it already provides, what this paper adds and what it does not claim, and identify the one question that those precedents leave open.
+\end{enumerate}
+
+This is a design and method contribution, not an evaluation: no experiment and no user study were run. The five analyses illustrate interface behaviour under one configuration; they are selected expression-analysis tasks, not complete reproductions of their source studies, and they do not establish improved understanding, a comparison against other systems, or the scientific validity of any individual analysis. Section~\ref{method} states the method; Section~\ref{system} describes the architecture; Section~\ref{episodes} reports the analyses; Section~\ref{discussion} sets the boundary and the criteria under which the claim fails.
 
 \section{Related work}\label{related-work}
 
-Research on AI-assisted analysis already provides several of the capabilities that Rho brings together. WaitGPT makes generated code and execution steps inspectable and supports local intervention; interactive task decomposition exposes intermediate tasks for steering and verification \cite{waitgpt,decomposition}. InsightLens organizes extracted insights with their supporting code, outputs and visualizations \cite{insightlens}. These systems establish important precedents for process inspection and insight navigation; the present cases do not establish that Rho makes people more effective at either.
+Research on interactive and agent-assisted analysis already provides several of the capabilities Rho brings together. We read each source at a recorded version and, where useful, state not only what it does but what it does not by itself establish.
 
-Intent-driven interfaces are also an established line of work. DynaVis creates interactive controls for visualization edits, DashChat composes dashboard prototypes, and Data Formulator 2 uses data threads to revisit analysis states and supply context for subsequent work \cite{dynavis,dashchat,dataformulator}. Rho's focus here is the relationship between a particular analysis question and inspectable computational materials in a shared project. We do not claim that generating layouts, keeping history, or using a selected state as agent context is new.
+\subsection{Systems that make an analysis process inspectable}\label{rw-inspectable}
 
-Shared scientific context and revision have direct precedents. Mycelium links scientific observations, interpretations and hypotheses, and records a human constraint reaching a later analysis \cite{mycelium}. SEMV supports challenges to claims and evidence and retains revised reports \cite{semv}. Provenance models such as PROV-DM distinguish entities, activities and derivations \cite{prov}; representing such links does not make the linked interpretation correct. Tisane demonstrates interactive reasoning from data and conceptual relationships to statistical models \cite{tisane}. These precedents help define the scope of our contribution: a concrete interface and its observed use in selected analysis episodes, not a new provenance ontology or an automatic scientific validator.
+Making a generated analysis inspectable is an established line. WaitGPT organizes an agent's code into a readable chain, shows execution state, and allows parameter changes, local follow-up questions and re-runs \cite{waitgpt}; interactive task decomposition exposes intermediate tasks for steering and verification and reports limits on how edits propagate \cite{decomposition}; AI Chains makes intermediate steps visible and editable \cite{aichains}; Treadstone renders the discussion of several analysis agents as a readable interface \cite{treadstone}. InsightLens goes further and makes the insight itself the unit: it extracts and revises insights, links them to supporting code, outputs and figures, and navigates by theme \cite{insightlens}. Loops uses provenance and visualization to support exploratory analysis in notebooks, including comparison across weeks \cite{loops}; analytic provenance for sensemaking is a longer research agenda \cite{analyticprovenance}. Together these establish that a process can be read, that insights can be organized and revisited, and that inspection can pause. They organize by extracted conclusions or by the steps of a pipeline; they do not ask which materials a specific current judgment requires.
 
-\section{Rho and the analysis setting}\label{rho-and-the-analysis-setting}
+\subsection{Intent-driven interface generation}\label{rw-intent}
 
-\subsection{Design and interface}\label{design-and-interface}
+Intent-driven generation is a separate, older line. DynaVis synthesizes controls for visualization edits \cite{dynavis}; DashChat composes dashboard prototypes \cite{dashchat}; Generative UI produces whole pages from a prompt \cite{generativeui}; Data Formulator 2 uses data threads to revisit states and supply context for later work \cite{dataformulator}. Together they rule out claiming intent-driven layout, or ``a selected state as agent context'', as new. What they organize is a view, a dashboard or a page; the material a standing scientific judgment must bring together, and the relations among that material, are outside their scope.
 
-Rho organizes work around a project containing analysis materials such as data, scripts, notes, outputs and recorded activity. The Notebook provides an R session in which the agent's cells, outputs and live variables can be inspected. Studio brings selected materials and conversation views together; the Overview presents an answer and associated files; Graph displays associations drawn from notes and activity. These are views of particular recorded states, not a guarantee that all materials are semantically linked or that an agent has read every displayed item.
+\subsection{Shared scientific context, memory and revision}\label{rw-shared}
 
-The guiding design question is how a researcher can move from a question to the evidence needed to assess an explanation, and back to the next analysis. The required materials differ by question: checking a reversal count calls for contrasts and inclusion rules; assessing a single-nucleus comparison calls for sample membership as well as a cell embedding. The cases below show specific arrangements and recorded choices. They do not establish an automatic method for selecting an optimal arrangement for every purpose.
+Sharing and revising scientific state also has precedents. Mycelium links scientific observations, interpretations and hypotheses into a sourced context graph and routes it to people and agents, and its supplementary figure records a human scientific constraint reaching a later analysis \cite{mycelium}. SEMV localizes a challenge to a claim and its evidence, recomputes within the affected range, retains before-and-after reports, and consolidates verified experience into retrievable memory \cite{semv}. Memory Sandbox offers memory that can be viewed, edited, summarized and traced to its source \cite{memorysandbox}; cotomi Act turns a process into a workspace both sides can edit and an agent can retrieve \cite{cotomi}; MemGPT brings external memory into the agent's working loop \cite{memgpt}. At the representation level we introduce no new provenance ontology: PROV-DM already expresses entities, activities, derivations and revisions \cite{prov}, and EVI expresses claims, evidence and challenges \cite{evi}. Thus ``a challengeable explanation'', ``retaining old results'', ``local revision'', ``revision entering memory'' and ``shared, editable memory'' cannot be presented here as contributions.
 
-Rho distinguishes material of different origins: an agent's summary or stated plan, a note, a command reference, an observed file and a computational output support different inferences. Reading a displayed result is not equivalent to endorsing it. A further analysis may change a result without retroactively making an earlier interpretation valid. The interface provides entry points for inspection; scientific judgement and appropriate statistical design remain the researcher's responsibility.
+\subsection{Statistical and bioinformatics constraints}\label{rw-stats}
 
-\subsection{Case selection and evidence}\label{case-selection-and-evidence}
+The analysis setting rests on a scientific constraint that already has a literature: single-cell differential expression must account for biological replicates, and ignoring within-donor dependence produces false discoveries \cite{squair2021}. Claim strength, the unit of replication and re-checking after a change have been raised directly for bioinformatics \cite{trustworthy}; interactive clarification of domain relationships and statistical models is the subject of Tisane and rTisane \cite{tisane,rtisan}. This paper does not claim to discover pseudoreplication, to choose the right statistical model automatically, or that ``claims need evidence'' is a new idea. These works fix what a reader must understand; we are concerned with how such judgments arise, are retained, and change between reading and continuing an analysis.
 
-We describe five selected analyses using publicly available GEO datasets associated with published biomedical studies. They were run on one local machine with one agent and one model in Rho 0.5.2; the public data were downloaded before the runs and R code was executed in the shared Notebook session. The tasks cover particular expression analyses rather than complete reproductions of the studies. The local project scripts, result tables, notes, session exports and screenshots underpin the descriptions, but their implementation record is not yet publicly available. The original studies and GEO accessions identify the input sources; they are not independent evidence that these local analyses are correct.
+\subsection{Plugin capability and heterogeneous compute}\label{rw-plugins}
 
-Table~\ref{tab:cases} summarizes the cases. They are observational demonstrations of what the interface displayed and what the saved analyses reported. There was no independent participant or comparative user study. We distinguish screenshots captured during the original P1 session from later 3840 $\times$ 1972 captures of reopened P2--P5 projects, where the saved views and artifacts were available but the original R sessions had ended. Separately redrawn plots are identified in their captions.
+Connecting different compute and environments into one workbench also has mature foundations. Galaxy uses job-runner plugins and destination configuration to reach local, cluster and remote resources and sets environment conditions per destination \cite{galaxy}. JupyterLab's extension points cover custom storage browsing, content and MIME rendering, run sessions and kernel services, and the application interface itself \cite{jupyterlab}. Plugin architecture, customizable access, multiple compute backends and an extensible workbench therefore cannot on their own constitute this paper's novelty.
+
+\subsection{The remaining gap}\label{rw-gap}
+
+Each line above solves one thing: the process can be read, insights can be organized, interfaces can be generated, state can be shared, capabilities can be plugged in. Together they leave one question open: \textbf{when all of these capabilities are present, what decides which materials should be organized into an operable working interface for the judgment at hand, and how does that organization become a fact shared by the person and the agent?} Existing systems decide the organization by a fixed workflow, by already-extracted insights, by a view intent, by a page, or by a transcript; none decides it by the materials and relations that a current scientific judgment requires. Table~\ref{tab:closest} places the closest work against this question and states the boundary of the claim explicitly.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\caption{The closest work placed against the method's question. Each cell reports a mechanism the source explicitly describes in the version read; the right column states what this paper adds.}
+\label{tab:closest}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.17\linewidth} >{\raggedright\arraybackslash}p{0.37\linewidth} >{\raggedright\arraybackslash}p{0.40\linewidth}@{}}
+\hline
+Closest work & What it already provides & What this paper adds \\
+\hline
+InsightLens & Extracts and revises insights; links code, outputs and figures; navigates by theme; pins insights of interest \cite{insightlens} & Organizes by the current judgment's materials and relations rather than by an extracted insight, and keeps that organization for later agent continuation. \\
+\hline
+WaitGPT & Readable code chain, execution state, local follow-up and re-run \cite{waitgpt} & Organizes cross-view materials (figures, models, runs, interpretations) around a scientific purpose and carries the effective choices into later context. \\
+\hline
+Mycelium & Sourced scientific context graph; a human constraint recorded as reaching a later analysis \cite{mycelium} & Turns relevant scientific state into an operable interface for the current purpose and into continuation context. \\
+\hline
+DynaVis; DashChat; Data Formulator 2; Generative UI & Intent-driven widgets, dashboards, pages; a chosen state used as the next context \cite{dynavis,dashchat,dataformulator,generativeui} & The object organized is checkable scientific material and its relations, revised as results and judgments change. \\
+\hline
+SEMV; Memory Sandbox; cotomi Act; MemGPT & Challengeable claims, scoped recomputation, editable and retrievable memory \cite{semv,memorysandbox,cotomi,memgpt} & Here a revision changes the current interface organization and the continuation, not only the memory. \\
+\hline
+Galaxy; JupyterLab & Plugin access to local, cluster and remote compute; storage, rendering, session and UI extension \cite{galaxy,jupyterlab} & Access conditions enter shared state and change what is shown and operable. \\
+\hline
+\end{tabular}
+\end{table}
+
+The table lists mechanisms each system explicitly reports in the version read; ``does not report this operation'' is a literature boundary, not a claim of impossibility. In every row the right column states only what this paper adds; where a preceding system already provides the remaining mechanism, this paper does not claim it, and the boundaries are collected in Section~\ref{limitations}. Extending these systems could realize parts of the method; the comparison would then turn on the organizing basis, the landing of a revision and the continuation boundary, not on a feature count.
+
+\section{A purpose-driven organization method}\label{method}
+
+\subsection{Terms}\label{terms}
+
+\begin{itemize}
+  \item \textbf{Scientific purpose.} What the researcher is currently trying to judge or complete, for example ``judge whether this difference is consistent across donors''. It may come from the current task and an explicit interaction context; a purpose inferred by the system should be visible and correctable.
+  \item \textbf{Material.} An object that already exists or can be obtained in the analysis: data, annotations and mappings, figures, models, scripts, run records, outputs, literature evidence. Each material carries a version and a source.
+  \item \textbf{Capability.} Connected information reading, computation and environment adaptation, with the corresponding views and operation entries. Capabilities are provided by plugins or native tools; their meaning belongs to the provider.
+  \item \textbf{Analysis unit.} One analysis with its scientific question, scope, method and rationale, runs and artifacts, current interpretation, open items and revision history.
+  \item \textbf{Organization plan.} The brief plan formed for a purpose this time: which objects and versions are selected, why they are needed, whether each serves comparison, explanation or further operation, what is still missing, and how the views locate the same object.
+  \item \textbf{Shared state.} The versioned, attributed representation on which the person and the agent both rely; the interface and the agent's context are different presentations of it.
+\end{itemize}
+
+\subsection{From a purpose to an organization plan}\label{org-plan}
+
+A purpose is first resolved into the relations that must be read or compared, and materials are chosen accordingly. Judging whether a difference is consistent across donors requires linking cells to donors, grouping to observations, descriptive material to statistical results; retrieving files that contain a gene name cannot do this organization. The system may propose these relations, but their basis must come from metadata, actual analysis records, or an explicit statement by either side. An organization plan handles four things: which materials are needed, where they can be obtained, what role each plays in the current judgment, and which views and operations are actually available. Before materials are juxtaposed, their observation units, inclusion scope and versions must be distinguishable; materials that cannot be compared directly can be used to explain a difference rather than forced into one result. If a required material does not exist, the plan states what is missing and which step remains, rather than filling in content to make the interface look complete; and it does not read ``not selected'' as ``does not exist''.
+
+\subsection{Three kinds of change must remain distinct}\label{three-changes}
+
+Operations that look similar on one interface have different meanings. Moving a view changes only layout; limiting the focus to one donor changes only the reading focus; changing the inclusion condition or the comparison changes the analysis scope. The system must not silently interpret the first two as the third, or a person's reading action becomes an analysis decision and the agent receives a scope it never agreed to. Correspondingly, ``collapsing code'' is not ``removing it from the analysis'', ``closing the interface'' is not ``cancelling the analysis'', and ``hiding in a view'' is not ``deleting from shared state''.
+
+\subsection{Shared state: three sources and per-object versions}\label{shared-state}
+
+The content of the shared state is distinguished by source: the computation facts actually observed, the explanations and associations an agent gives, and the judgments a researcher explicitly writes. The three may reference one another but cannot substitute for one another: a process exiting successfully does not imply a correct conclusion, an agent's explanation does not automatically become a scientific fact, and one of the researcher's readings does not constitute adoption. Versions are per object rather than global: each analysis and each resource has its own version, without a single revision number that treats the whole project as updating at once. The person's reading position, the analysis's current version and the version the agent most recently received are kept separately; the same scope does not mean the same result, receiving a revision does not mean having recomputed, and being offered a revision does not mean the agent has read it.
+
+\subsection{Five operations form a round-trip}\label{five-ops}
+
+\begin{table}[!htbp]
+\centering
+\small
+\caption{The five operations of one round-trip. They are not a mandatory pipeline but recognizable links: a round-trip may contain only reading and confirmation.}
+\label{tab:ops}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.20\linewidth} >{\raggedright\arraybackslash}p{0.36\linewidth} >{\raggedright\arraybackslash}p{0.38\linewidth}@{}}
+\hline
+Operation & Input & Change produced \\
+\hline
+Organize by purpose & Current purpose, available materials and capabilities, focus scope & Selection and acquisition, role and relation statements, operable layout and gaps \\
+Read and explore & Organized materials, comparison relations, explicit versions & Expand, locate, compare; keep layout, focus and analysis-scope changes distinct \\
+Revise purpose or analysis & The selected objects, the change to purpose or judgment, and its scope & Reselect materials or update interpretation; retain the original run facts and reading entry \\
+Continue from shared state & Current purpose, material relations, effective decisions, compute conditions, open items, references & A checkable agent-context supply, recording the actual access state \\
+Reorganize as work advances & New results, run changes and their relation to the current purpose & Add content, adjust emphasis, and state the change relative to what was read \\
+\hline
+\end{tabular}
+\end{table}
+
+Revision happens only when the person explicitly changes an analysis choice or an interpretation state; asking ``why'' produces only an attributed explanation. Reading, asking, adopting and revising are not merged into automatic consent.
+
+\subsection{Capability providers and the organizer}\label{capability}
+
+Plugins let the system adapt to different kinds of information, compute and environment without fixing one analysis stack at the base of the application. We distinguish the \emph{capability provider} from the \emph{organizer} of the working interface (Table~\ref{tab:capability}).
+
+\begin{table}[!htbp]
+\centering
+\small
+\caption{The role of a capability in the working interface. Each row is a role, not a requirement that a single plugin provide all of it.}
+\label{tab:capability}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.19\linewidth} >{\raggedright\arraybackslash}p{0.40\linewidth} >{\raggedright\arraybackslash}p{0.35\linewidth}@{}}
+\hline
+What is connected & What the capability must provide & How it enters the working interface \\
+\hline
+Information and domain material & A reading entry, actual format and scope, version and source, and evidence-based cell, donor and gene mappings & Decides which materials can be obtained and related. Object adapters help read single-cell objects but cannot infer scientific meaning from a file suffix. \\
+Compute and environment & A compute entry, inputs and environment conditions, real task identity, state and results; customizable for local or remote & Decides what can be continued, what is blocked, and how reading is supported during waiting and partial results; does not hide environment differences. \\
+Views and interaction entries & Presentation, selection and operation suited to the connected resource, and the objects and scope they actually act on & Lets materials be read and operated on for the current purpose; the person's and the agent's entries point to the same capability and resource. \\
+\hline
+\end{tabular}
+\end{table}
+
+Three constraints follow. First, access conditions enter the shared state: which input is currently referenced, which capabilities are available, where computation runs, which facts have not been obtained; otherwise ``the interface looks complete'' hides the actual gap. Second, a plugin need not have a UI: the absence of a view does not mean the capability is absent, and a UI entry does not mean its required environment is available. Third, a specific dataset, disease comparison, statistical design or analysis order is an analysis choice in a project and must not be frozen into a general application merely because plugins are customizable. This division matches Rho's current source ownership (see the \href{https://github.com/YuLab-SMU/Rho/blob/main/docs/ARCHITECTURE.md}{Rho architecture} and \href{https://github.com/YuLab-SMU/Rho/blob/main/docs/PLUGIN-AUTHORING.md}{UI extension} records); the full plugin boundary is in the \href{https://github.com/YuLab-SMU/Rho-plugins/blob/main/docs/PLUGIN-MODEL.md}{Rho-plugins capability model}.
+
+The method constrains only what must be checkable, not the layout, size or visual style. Its substantive constraints are: the selection and association of materials retain their attribution, and a model may propose but cannot turn a relation it generated into an established fact; the rationale and unresolved relations are traceable, and a person's correction can target ``a missing kind of material'' rather than only a wrong conclusion; source identity, available operations, view bindings and existing state are carried by the corresponding capability rather than invented by the interface; and the state the interface rests on is the same set of versioned statements and references the agent receives, so compression cannot decide by a single free summary whether a human revision is kept.
+
+\section{Rho: architecture and interface}\label{system}
+
+\subsection{Three layers and four shared concepts}\label{layers}
+
+Rho separates three layers (Figure~\ref{fig:architecture}, panel A). The \textbf{application container} selects and assembles components, and owns layout and shared interaction routing and presentation. \textbf{Functional components (plugins)} are the capability providers---an R analysis, an agent bridge, a table, a plot, an editor or a file tool---and own semantics, native state, artifacts, provenance and results. \textbf{Rho-core} supplies optional managed execution: original request identity and deduplication, retained execution facts, a resident Host and a public CLI. Core is not a prerequisite for an agent computation and is not on every path; an agent normally uses its native tools with existing permissions, and managed execution is selected only for a concrete need such as execution continuity or a retained record. During the five analyses reported in Section~\ref{episodes}, managed execution was unavailable: they ran through the shared Notebook kernel on the agent's native tools, so they exercise the workspace views and the shared session, not the optional managed-execution path.
+
+Four concepts connect components to the container: an \textbf{action} (identity, typed inputs, preconditions, effects, results and cancellation semantics); a \textbf{resource} (an owner-provided reference to a file, table, plot, model or task, with provenance and the content version it needs); a \textbf{selection} (stable entities or ranges in a particular resource version); and a \textbf{view} (presentation of resources, registered actions and observation subscriptions). Agent tools, UI controls and CLI adapters reach the same component action, so a person and an agent reach the same capabilities and resources through different entrances. In the design, the shared state the method relies on is this body of actions, resources, selections and views, each with an owner, a version, and a provenance whose source is an observed computation fact, an agent interpretation, or a human judgment (Figure~\ref{fig:architecture}, panel B). Two facts the figure keeps apart: component semantics belong to the plugin, composition and routing to the application, and a single execution's lifetime to Core; and a displayed relationship is not by itself proof that a scientific claim is correct. The five analyses below instantiate views and resources over a shared Notebook session; they do not exercise the full action and selection contract described here.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.96\textwidth]{figures/figure-architecture.pdf}
+\caption{\textbf{Rho's architecture and the analysis round-trip.} (A) Three layers---the application container that composes and routes, functional components that own capability and semantics, and optional managed execution---with the researcher and the agent reaching one body of actions and resources, and the shared state carrying each object's owner, version and provenance. (B) The method as a round-trip: a scientific purpose forms an organization plan, which becomes an operable interface; human reading and revision and agent continuation both act on one shared state, whose contents are distinguished by source and versioned per object, and new results drive re-organization. Panel A shows the design; the analyses in Section~\ref{episodes} used the workspace views over a shared Notebook session and did not exercise the optional managed-execution path.}
+\label{fig:architecture}
+\end{figure}
+
+These boundaries have a practical consequence for the method. Because the application composes views and routes actions but does not re-implement a component's behavior, the same analysis objects can appear in different views without a second source of truth. Because Core is optional, an analysis can run with the agent's native tools while still being observed and represented in the shared state. And because a missing component is reported unavailable rather than silently installed, the interface can state a gap instead of hiding it.
+
+\subsection{The workspace views}\label{views}
+
+Rho organizes work around a project containing analysis materials such as data, scripts, notes, outputs and recorded activity. The \textbf{Notebook} provides an R session in which the agent's cells, outputs and live variables can be inspected. \textbf{Studio} brings selected materials and conversation views together; the \textbf{Overview} presents an answer with its associated files; \textbf{Graph} displays associations drawn from notes and activity. These are views of particular recorded states, not a guarantee that all materials are semantically linked or that an agent has read every displayed item.
+
+The guiding design question is how a researcher can move from a question to the evidence needed to assess an explanation, and back to the next analysis. The required materials differ by question: checking a reversal count calls for contrasts and inclusion rules, whereas assessing a single-nucleus comparison calls for sample membership as well as a cell embedding. Rho also distinguishes material of different origins: an agent's summary or stated plan, a note, a command reference, an observed file and a computational output support different inferences. Reading a displayed result is not equivalent to endorsing it, and a further analysis may change a result without retroactively making an earlier interpretation valid. The interface provides entry points for inspection; scientific judgment and appropriate statistical design remain the researcher's responsibility.
+
+\subsection{Case selection and evidence}\label{cases}
+
+We describe five selected analyses using publicly available GEO datasets associated with published biomedical studies. They were run on one local machine with one agent and one model in Rho 0.5.2 (source commit 64d73550f4bb1786e6cec42071fbe8a67a8ba230), with managed execution unavailable; the public data were downloaded before the runs and R code was executed in the shared Notebook session. The tasks cover particular expression analyses rather than complete reproductions of the studies. The local project scripts, result tables, notes, session exports and screenshots underpin the descriptions, but their implementation record is not yet publicly available. The original studies and GEO accessions identify the input sources; they are not independent evidence that these local analyses are correct.
+
+We report the first case in depth because it exercises all three workspace views; the other four are reported more briefly as different questions that call for different evidence. Table~\ref{tab:cases} summarizes the five. All are observational demonstrations of what the interface displayed and what the saved analyses reported; there was no independent participant or comparative user study. We distinguish screenshots captured during the original P1 session from later $3840 \times 1972$ captures of reopened P2--P5 projects, where the saved views and artifacts were available but the original R sessions had ended. Separately redrawn plots are identified in their captions.
 
 \begin{table}[!htbp]
 \centering
@@ -81,151 +221,166 @@ P5 & GSE252990 & Blood transcriptome & What can a patient-paired comparison supp
 \end{tabular}
 \end{table}
 
-\section{Illustrative analysis episodes}\label{illustrative-analysis-episodes}
+Table~\ref{tab:mapping} states, for each case, which part of the method it illustrates and what it leaves untested; it is the bridge between Section~\ref{method} and the analyses that follow.
+
+\begin{table}[!htbp]
+\centering
+\small
+\caption{What each case illustrates of the method, and what it does not show. The mapping is uneven: no single case exercises the full round-trip or a revision landing.}
+\label{tab:mapping}
+\begin{tabular}{@{}l >{\raggedright\arraybackslash}p{0.42\linewidth} >{\raggedright\arraybackslash}p{0.40\linewidth}@{}}
+\hline
+Case & Part of the method it illustrates & What it does not show \\
+\hline
+P1 & Organize and read across the three workspace views; keep the three material origins distinct (agent cell, note, observed output) & A human revision or an agent continuation; any user observation \\
+P2 & Reading that separates the cell count from the biological replicate; an agent annotation kept as interpretation, not fact & A completed round-trip or a revision landing; the class labels are unvalidated \\
+P3 & Retaining alternative analysis choices as inspectable material; reading a pooled enrichment for its missing direction & A revision or continuation; no comparison with the source study \\
+P4 & Keeping a count discrepancy and its candidate causes open, with no tested cause & Which choice caused the difference; the metabolomics arm \\
+P5 & Distinguishing a paired comparison from a different question; sensitivity to input handling & Any revision or agent continuation; the original processing history \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Illustrative analyses}\label{episodes}
 
 \subsection{P1. A discrepancy in tauopathy bulk RNA-seq}\label{p1.-a-discrepancy-in-tauopathy-bulk-rna-seq}
 
 The first project started from a published bulk RNA-seq study of chromogranin A and tauopathy and its GEO data \cite{jati2025}. The requested task was narrower than reproducing the paper: recompute specified differential-expression and reversal counts, perform GO biological-process enrichment, and record outputs and choices. The public data had been downloaded before the run. A local project README stated the comparisons and expected files; the 17 samples comprised five wild-type, six hTau and six CgA-KO/hTau samples. The agent executed R code in Rho's shared Notebook session, using two pairwise DESeq2 contrasts with nominal P \textless{} 0.01 and \textbar log2 fold change\textbar{} \textgreater{} 0.5.
 
-The first result was a discrepancy, not a confirmation. The local run reported 1,096 up- and 1,549 down-regulated genes for the first contrast, versus 1,193 and 869 reported in the task's comparison with the paper. The reversal counts were 334 and 551, versus 417 and 293. The recorded analysis retained alternative reversal definitions in a separate table. These counts describe one run and one comparison; they do not establish why the published numbers differed, nor do they establish which definition is scientifically correct.
+The first result was a discrepancy, not a confirmation. The local run reported 1,096 up- and 1,549 down-regulated genes for the first contrast, versus 1,193 and 869 reported in the task's comparison with the paper. The reversal counts were 334 and 551, versus 417 and 293. The recorded analysis retained alternative reversal definitions in a separate table. These counts describe one run and one comparison; they do not establish why the published numbers differed, nor do they establish which definition is scientifically correct. Figure~\ref{fig:p1counts} sets the two sets of counts side by side.
 
-The discrepancy changes what the researcher needs to inspect. Rather than asking only whether the run produced a figure, the researcher can ask which samples and contrast were used, how reversal was defined, which choices affected the counts, and whether those choices match the published analysis. Rho's role in this case is to keep the computation and its materials available for that investigation.
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.82\linewidth]{figures/figure-p1-counts.pdf}
+\caption{\textbf{P1 recomputed versus reported counts.} The local run and the task's comparison with the published study differ in both directions and in the two reversal definitions. The chart redraws the counts given in the text; it is not a new analysis and does not explain the difference.}
+\label{fig:p1counts}
+\end{figure}
+
+The discrepancy changes what the researcher needs to inspect. Rather than asking only whether the run produced a figure, the researcher can ask which samples and contrast were used, how reversal was defined, which choices affected the counts, and whether those choices match the published analysis. This is the method's first operation made concrete: the purpose is not ``produce a figure'' but ``explain a difference'', and the organization must keep the computation and its materials available for that investigation.
 
 \subsubsection{Inspecting the computation}\label{inspecting-the-computation}
 
-Figure~\ref{fig:notebook} shows the agent-attributed cell, its output and the live variables recorded during the P1 run.
+Figure~\ref{fig:notebook} shows two regions of the P1 Notebook capture: the agent-attributed R cell and its reported output.
 
-\begin{figure}[!htbp]
+\begin{figure}[H]
 \centering
-\includegraphics[width=\linewidth,height=0.80\textheight,keepaspectratio]{figures/figure-1-notebook.png}
-\caption{\textbf{Shared computation in the P1 Notebook.} Enlarged regions of a single capture show (A) an R cell attributed to Claude Code, with its stated purpose and elapsed time; (B) reported counts and a gene-mapping warning; and (C) two parts of the live Variables pane, including \texttt{enrichResult} objects. The capture records a state during the local application test of Rho 0.5.2. Regions have been rearranged for legibility; screenshot content is unchanged.}
+\includegraphics[width=0.72\linewidth]{figures/figure-p1-anchor.png}
+\caption{\textbf{A region of the P1 Notebook.} (A) An R cell attributed to Claude Code, with its stated purpose and elapsed time; (B) the reported up- and down-regulated and reversal counts, followed by a gene-mapping warning. Cropped from a single capture taken during the local application test of Rho 0.5.2; the full capture, including the live Variables pane, is Supplementary Figure~S1.}
 \label{fig:notebook}
 \end{figure}
 
-The Notebook made it possible to inspect an agent-attributed cell alongside its output and live variables. The same session contained data frames, plotting objects, and enrichment results. This is an observed property of the run: it does not mean that every analysis choice was correct, and it does not by itself show that the person understood or endorsed an output.
+The Notebook made it possible to inspect an agent-attributed cell alongside its output. The same session also held data frames, plotting objects and enrichment results (Supplementary Figure~S1). This is an observed property of the run, not evidence that the analysis was correct or that the person understood it.
 
 \subsubsection{Bringing the analysis back together}\label{bringing-the-analysis-back-together}
 
-Figures~\ref{fig:studio} and~\ref{fig:graph} show two views of the project's recorded materials.
+Beyond the Notebook, two further views carry the same project. Studio places the written question next to the materials produced during the work; Graph shows recorded associations among a question, its findings, files and runs (Supplementary Figures~S2 and~S3).
 
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=\linewidth,height=0.80\textheight,keepaspectratio]{figures/figure-2-studio.png}
-\caption{\textbf{P1 in Studio.} Enlarged regions show (A) the question in project notes and (B) the files listed in the agent's answer. (C) A region of the same capture shows the conversation's work views and timeline. The regions have been rearranged for legibility; their presence does not establish that each component was read by the agent.}
-\label{fig:studio}
-\end{figure}
-
-Studio places the written question next to the materials produced during the work. The local notes identify the data and method, list files, and preserve the unresolved difference in counts. This layout makes it possible to move from a conclusion to a relevant script, output, or recorded choice without treating a generated summary as the only source of truth. It is one concrete arrangement observed in this project; the test did not establish that Rho automatically selects an optimal arrangement for every research question.
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=\linewidth,height=0.80\textheight,keepaspectratio]{figures/figure-3-graph.png}
-\caption{\textbf{P1 in Graph.} (A) A region of the graph relates the question, findings, script and result files. (B) An enlarged detail repeats one finding from A. (C) The relationship legend is redrawn from the same capture for legibility. Edges make recorded associations navigable; they do not certify the validity of a scientific explanation.}
-\label{fig:graph}
-\end{figure}
-
-Graph provides another route through the same project. In the recorded state, it showed four findings and five choices from the notes, alongside files and runs. The provenance legend matters: an agent's report that a result exists, a filename mentioned in a command, an observed disk change, and a statement in notes are different kinds of evidence. Keeping them distinct helps the reader identify what still requires checking. It does not convert the graph into a validated model of the scientific reasoning.
+Studio identifies the data and method, lists files, and preserves the unresolved difference in counts, so a conclusion can be traced to a script, output or recorded choice without treating a generated summary as the only source of truth. Graph distinguishes several kinds of evidence: an agent's report that a result exists, a filename mentioned in a command, an observed disk change and a statement in notes. Keeping them distinct helps a reader see what still requires checking; it does not make the graph a validated model of the scientific reasoning.
 
 \FloatBarrier
 
-\subsection{P2. Single-nucleus data: what is the biological replicate?}\label{p2.-single-nucleus-data-what-is-the-biological-replicate}
+\subsection{P2. Single-nucleus data: is the biological replicate the sample?}\label{p2}
 
-The second project used hippocampal single-nucleus data from a study of neuronal APOE4 removal \cite{koutsodendris2023} (GEO GSE221215). The local task began with 11 samples and retained 92,597 nuclei after quality control. The agent's analysis clustered the nuclei and assigned coarse cell classes; 8,364 nuclei remained unresolved. These labels are working annotations, not independently validated cell identities. Figure~\ref{fig:p2} shows the embedding alongside the per-sample quality-control table.
+The second project used hippocampal single-nucleus data from a study of neuronal APOE4 removal \cite{koutsodendris2023} (GEO GSE221215). The local task began with 11 samples and retained 92,597 nuclei after quality control; the agent clustered the nuclei and assigned coarse cell classes, 8,364 of which remained unresolved. These labels are working annotations, not independently validated cell identities. The saved embedding and per-sample quality-control table are in Supplementary Figure~S4.
 
-\begin{figure}[!htbp]
+\begin{figure}[H]
 \centering
-\includegraphics[width=\linewidth,height=0.80\textheight,keepaspectratio]{figures/figure-4-p2.png}
-\caption{\textbf{Single-nucleus classes and sample-level quality control.} A crop of the reopened P2 Studio displays the saved UMAP and per-sample QC table. The source capture was 3840 $\times$ 1972 pixels; the figure preserves the pixels in the selected region. The classes are preliminary, and the R session was no longer live when this view was captured.}
-\label{fig:p2}
+\includegraphics[width=0.95\linewidth]{figures/figure-casecards.pdf}
+\caption{\textbf{Two further cases and what each opened.} (left) P2 turns on whether the biological replicate is the sample or the cell; (right) P5 turns on what a patient-paired comparison can support. Each card lists the question, the materials the interface had to organize, and what the case opened; neither case exercises a revision or an agent continuation.}
+\label{fig:casecards}
 \end{figure}
 
-The visual grouping opens a more specific question: do the apparent differences reflect the biological samples, or merely the number of nuclei contributed by each one? The local excitatory-neuron comparison contained 20,832 PS19-fE4 and 8,533 PS19-fE3 nuclei from four and three mice, respectively. Its cell-level Wilcoxon test did not model dependence among nuclei from the same mouse. A large number of nuclei therefore does not provide the same replication as a large number of mice \cite{squair2021}. The per-sample QC table and the UMAP serve different purposes: one exposes sample contributions, while the other shows how the assigned classes occupy the embedding. Neither establishes that the differential-expression list is reliable.
-
-This local comparison also asks a different question from the original study's central neuronal APOE4-deletion intervention. The gene list was not compared with the paper's list. A defensible continuation would validate the class labels, align the intended contrast with the study, and repeat the comparison with an appropriate sample-aware model. Rho makes the materials for that decision accessible; it does not supply the biological judgement.
+The visual grouping opens a specific question. The local excitatory-neuron comparison contained 20,832 PS19-fE4 and 8,533 PS19-fE3 nuclei from four and three mice, respectively, and its cell-level Wilcoxon test did not model dependence among nuclei from the same mouse; a large number of nuclei is not the same replication as a large number of mice \cite{squair2021}. The per-sample table exposes sample contributions while the UMAP shows how the assigned classes occupy the embedding; neither establishes that the differential-expression list is reliable. The comparison also asks a different question from the study's central neuronal APOE4-deletion intervention, so the gene list was not compared with the paper's. A defensible continuation would validate the class labels, align the intended contrast with the study, and repeat the comparison with an appropriate sample-aware model. Rho makes the materials for that decision accessible; it does not supply the biological judgment.
 
 \FloatBarrier
 
-\subsection{P3. Spatial profiling: which compartment supports an explanation?}\label{p3.-spatial-profiling-which-compartment-supports-an-explanation}
+\subsection{P3. Spatial profiling: which compartment supports an explanation?}\label{p3}
 
-The third project used the GeoMx digital spatial profiling dataset GSE232853 from a diffuse large B-cell lymphoma study \cite{liu2024}. The local matrix contained 16,560 genes and 578 areas of illumination, including CD68- and CD20-selected segments. The task compared those two compartments, first checking marker expression and then fitting a limma model with \texttt{duplicateCorrelation} for paired segments. The project also retained paired-only and unpaired alternatives, making the choice of comparison inspectable. Figure~\ref{fig:p3} shows the local pathway table and a redraw of its significant terms.
+The third project used the GeoMx digital spatial profiling dataset GSE232853 from a diffuse large B-cell lymphoma study \cite{liu2024}. The local matrix contained 16,560 genes and 578 areas of illumination, including CD68- and CD20-selected segments. The task compared those two compartments, first checking marker expression and then fitting a limma model with \texttt{duplicateCorrelation} for paired segments, and it retained paired-only and unpaired alternatives so that the choice of comparison stayed inspectable (Figure~\ref{fig:p3}).
 
-\begin{figure}[!htbp]
+\begin{figure}[H]
 \centering
-\includegraphics[width=\linewidth,height=0.80\textheight,keepaspectratio]{figures/figure-5-p3.png}
-\caption{\textbf{From a compartment comparison to its pathway table.} (A) A native-pixel crop of the reopened P3 Studio shows the saved Hallmark table; the original display capture was 3840 $\times$ 1972 pixels. (B) A separately redrawn plot uses the same local table and displays the 13 terms with Benjamini--Hochberg-adjusted P \textless{} 0.05. Point position is the recorded gene ratio, size is the number of genes, and colour encodes adjusted P. The redraw is not a screenshot or a new enrichment analysis.}
+\includegraphics[width=0.9\linewidth]{figures/figure-p3-pathway.png}
+\caption{\textbf{P3 Hallmark terms.} A redraw of the local Hallmark over-representation table: the 13 terms with Benjamini--Hochberg-adjusted P \textless{} 0.05. Point position is the recorded gene ratio, size the number of genes, colour the adjusted P. The redraw uses the same local table and is not a new enrichment analysis; the source table as it appeared in Studio is Supplementary Figure~S5.}
 \label{fig:p3}
 \end{figure}
 
-At adjusted P \textless{} 0.05 and \textbar log2 fold change\textbar{} \textgreater{} 0.58, the main analysis reported 1,111 differentially expressed genes, of which 833 were higher in CD68 and 278 higher in CD20. An over-representation analysis of the combined list identified 13 significant Hallmark sets, including complement and interferon-gamma response. Because the analysis pooled both directions, an enriched term does not say which compartment drives it. The relevant next question is therefore directional: does the same pathway appear when genes higher in each compartment are analysed separately? The recorded panel background matters as well; these results describe enrichment within the measured gene panel, not an unrestricted genome-wide universe.
-
-The local matrix did not include the spatial-region labels required for the original study's region-level comparison, and the original Hallmark results were not available for a direct comparison. The case illustrates how a graph, table, analysis design and retained alternatives can inform the next question, not a replication of the full spatial study.
+At adjusted P \textless{} 0.05 and \textbar log2 fold change\textbar{} \textgreater{} 0.58, the main analysis reported 1,111 differentially expressed genes, of which 833 were higher in CD68 and 278 higher in CD20. An over-representation analysis of the combined list identified 13 significant Hallmark sets, including complement and interferon-gamma response. Because the analysis pooled both directions, an enriched term does not say which compartment drives it; the relevant next question is directional. The recorded panel background also matters: these results describe enrichment within the measured gene panel, not an unrestricted genome-wide universe. The local matrix did not include the spatial-region labels required for the original study's region-level comparison, so this is not a replication of the full spatial study.
 
 \FloatBarrier
 
-\subsection{P4. Ageing endothelium: why do reported counts differ?}\label{p4.-ageing-endothelium-why-do-reported-counts-differ}
+\subsection{P4. Ageing endothelium: why do reported counts differ?}\label{p4}
 
-The fourth project examined the transcriptomic arm of an ageing study that also included metabolomics \cite{kiesworo2025} (GSE270697). The local analysis used three old and four young mouse skeletal-muscle endothelial samples. After transcript-to-gene mapping and filtering, it fitted a limma--voom comparison. At BH-adjusted P \textless{} 0.05 and \textbar log2 fold change\textbar{} \textgreater{} 1, it reported 604 genes: 370 higher and 234 lower in old samples. The project records the paper's corresponding total as 500, comprising 406 higher and 94 lower. These figures make the discrepancy visible without explaining it (Figure~\ref{fig:p4}).
+The fourth project examined the transcriptomic arm of an ageing study that also included metabolomics \cite{kiesworo2025} (GSE270697). The local analysis used three old and four young mouse skeletal-muscle endothelial samples; after transcript-to-gene mapping and filtering it fitted a limma--voom comparison. At BH-adjusted P \textless{} 0.05 and \textbar log2 fold change\textbar{} \textgreater{} 1 it reported 604 genes (370 higher and 234 lower in old samples), whereas the project records the paper's corresponding total as 500 (406 higher and 94 lower). These figures make the discrepancy visible without explaining it (Figure~\ref{fig:p4}).
 
-\begin{figure}[!htbp]
+\begin{figure}[H]
 \centering
-\includegraphics[width=\linewidth,height=0.80\textheight,keepaspectratio]{figures/figure-6-p4.png}
-\caption{\textbf{A discrepancy and selected pathways in P4.} (A) A native-pixel crop of the reopened project shows the agent's reported counts; the original display capture was 3840 $\times$ 1972 pixels. (B) A separate redraw shows the five terms with the lowest adjusted P from each local GO BP and KEGG table. The redraw is not a screenshot or a new analysis. The answer is the agent's interpretation, not independent validation of its explanation.}
+\includegraphics[width=0.82\linewidth]{figures/figure-p4-counts.pdf}
+\caption{\textbf{P4 recomputed versus reported counts.} The local run reports 604 genes (370 higher, 234 lower in old samples) against the paper's recorded 500 (406 higher, 94 lower). The chart redraws the counts given in the text; it is not a new analysis and does not identify the cause. The agent's overview and its selected pathways are Supplementary Figure~S6.}
 \label{fig:p4}
 \end{figure}
 
-The saved choices identify several questions that a reviewer can pursue. The local analysis used an Ensembl 102 transcript map and a particular expression filter, whereas the paper used a different analysis pipeline. Alternative annotation and filtering were recorded, but their reported sensitivity totals use adjusted P alone, so they cannot be directly compared with the 604-gene count that also applies a fold-change threshold. One transcript absent from the candidate annotations accounted for approximately 34\% of counts in each sample; its effect on normalization was not measured. These observations identify potential sources of difference, not a tested cause.
-
-The pathway view offers a second example of why the underlying table matters. In the local ranked analysis, KEGG oxidative phosphorylation had a negative normalized enrichment score (\ensuremath{-}2.74) for old versus young. The original project plot contains only the ten most significant terms per source; the redraw in Figure~\ref{fig:p4} shows five per source. All terms in these selections are lower in old samples, which should not be read as the direction of every significant pathway. The metabolomics arm was not analysed in this project.
+The saved choices identify several questions a reviewer can pursue: the local analysis used an Ensembl 102 transcript map and a particular expression filter where the paper used a different pipeline, and one transcript absent from the candidate annotations accounted for approximately 34\% of counts in each sample, with its effect on normalization unmeasured. These identify potential sources of difference, not a tested cause. The pathway view shows why the underlying table matters: KEGG oxidative phosphorylation had a negative normalized enrichment score ($-2.74$) for old versus young, and all terms in the displayed selection are lower in old samples, which should not be read as the direction of every significant pathway. The metabolomics arm was not analysed in this project.
 
 \FloatBarrier
 
-\subsection{P5. Patient transcriptomes: separating a paired comparison from response prediction}\label{p5.-patient-transcriptomes-separating-a-paired-comparison-from-response-prediction}
+\subsection{P5. Patient transcriptomes: a paired comparison, not response prediction}\label{p5}
 
-The fifth project used the blood-expression component of a multi-omics mesothelioma study \cite{chin2025} (GSE252990). Its local matrix contained measurements from 40 patients at three time points. At baseline, 23 were recorded as responders and 17 as non-responders, whereas the study's phase II cohort was reported as 31 and 23. These are different scopes: the available matrix does not represent the entire 54-person cohort. Figure~\ref{fig:p5} shows the saved paired-comparison table.
+The fifth project used the blood-expression component of a multi-omics mesothelioma study \cite{chin2025} (GSE252990). Its local matrix contained measurements from 40 patients at three time points; at baseline, 23 were recorded as responders and 17 as non-responders, whereas the study's phase II cohort was reported as 31 and 23. These are different scopes: the available matrix does not represent the entire 54-person cohort. Figure~\ref{fig:casecards} (right) summarizes the case; the saved result table is Supplementary Figure~S7.
 
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=\linewidth,height=0.80\textheight,keepaspectratio]{figures/figure-7-p5.png}
-\caption{\textbf{A saved patient-level comparison in a Rho workspace.} The table shows the local on-treatment versus baseline results, reopened after the run. The source capture was 3840 $\times$ 1972 pixels and the selected region retains its original pixels. The view presents a saved table; the historical notebook and project records are needed to inspect its analysis context.}
-\label{fig:p5}
-\end{figure}
-
-For the on-treatment question, the analysis paired baseline and C3D1 samples from the same 40 patients using a patient-plus-time design. The available expression matrix contained continuous, apparently normalized values, so the main local analysis applied log2(x + 1) and limma \texttt{lmFit}/\texttt{eBayes}; it reported 2,596 genes at BH-adjusted P \textless{} 0.05. An alternative that applied voom directly to the supplied values reported 4,532. This contrast between outputs exposes sensitivity to input handling; it is not evidence that treating normalized values as counts is appropriate, or that either count is a verified biological finding.
-
-The pairing addresses within-patient change and asks a different question from baseline prediction of response. It also does not, by itself, distinguish treatment effects from other changes over time. The useful continuation is to establish the matrix's processing history, check the model and sample metadata, and compare the appropriate contrast with the original study. The local project did not analyse the study's single-cell component.
+For the on-treatment question, the analysis paired baseline and C3D1 samples from the same 40 patients using a patient-plus-time design. The available matrix contained continuous, apparently normalized values, so the main local analysis applied log2(x + 1) and limma \texttt{lmFit}/\texttt{eBayes} and reported 2,596 genes at BH-adjusted P \textless{} 0.05, while an alternative that applied voom directly to the supplied values reported 4,532. The contrast between outputs exposes sensitivity to input handling; it is not evidence that treating normalized values as counts is appropriate, or that either count is a verified biological finding. The pairing addresses within-patient change and asks a different question from baseline prediction of response, and it does not by itself distinguish treatment effects from other changes over time. The useful continuation is to establish the matrix's processing history, check the model and sample metadata, and compare the appropriate contrast with the original study.
 
 \FloatBarrier
 
-\section{Collaboration beyond the Rho window}\label{collaboration-beyond-the-rho-window}
+\section{Collaboration beyond the Rho window}\label{beyond}
 
-An agent need not originate in Rho for a researcher to bring its work into the project. In an installed external ACP episode \cite{acp}, an existing Codex session used an explicitly configured relay. The original client retained its input, permission choices and runtime, while Rho displayed the external session's reported plan and references to project files. The observed plan describes the agent's activity; a file reference or current file hash does not alone establish authorship or scientific correctness. This is a specific relay-based connection, not passive attachment to an arbitrary running client (Figure~\ref{fig:external}).
+An agent need not originate in Rho for a researcher to bring its work into the project. In an installed external ACP episode \cite{acp}, an existing Codex session used an explicitly configured relay. The original client retained its input, permission choices and runtime, while Rho displayed the external session's reported plan and references to project files. The observed plan describes the agent's activity; a file reference or current file hash does not alone establish authorship or scientific correctness. This is a specific relay-based connection, not passive attachment to an arbitrary running client (Supplementary Figure~S8).
 
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=\linewidth,height=0.80\textheight,keepaspectratio]{figures/figure-8-external-agent.png}
-\caption{\textbf{An external agent and Rho.} (A) An explanatory diagram of the explicit ACP connection. (B) An actual Rho-side capture during the separate installed external Codex episode, showing a live reported plan; the original capture was 1440 $\times$ 900 pixels. It does not show the external client window. This episode used a different package composition from the five 0.5.2 analysis projects.}
-\label{fig:external}
-\end{figure}
-
-A separate base-R collaboration episode \cite{baser} demonstrates the scientific handoff itself. An automated operator selected May in an \texttt{airquality} table and asked an external Claude Code agent why there were 24 observations and to exclude only missing ozone values. The agent received the selected row and version through a project-scoped MCP handoff, changed the script and linked the recalculated outputs. May changed from 24 observations with mean ozone 24.125 to 26 with mean 23.615; an independent base-R expression checked the five monthly aggregates. The original and new tables remained separately available for comparison. This is a controlled demonstration with an automated operator, not evidence of human usability or a validation of the missing-data assumption.
+A separate base-R collaboration episode \cite{baser} demonstrates the scientific handoff itself. An automated operator selected May in an \texttt{airquality} table and asked an external Claude Code agent why there were 24 observations and to exclude only missing ozone values. The agent received the selected row and version through a project-scoped MCP handoff, changed the script and linked the recalculated outputs. May changed from 24 observations with mean ozone 24.125 to 26 with mean 23.615; an independent base-R expression checked the five monthly aggregates, and the original and new tables remained separately available for comparison. This is a controlled demonstration with an automated operator, not evidence of human usability or a validation of the missing-data assumption.
 
 Rho's bundled PA14 quorum-sensing project \cite{pa14} provides another starting point. It brings together swarming measurements, co-culture ratios, RNA-seq counts and annotations to ask what the las and rhl systems contribute to collective behaviour. It is an illustrative project, not a sixth independent analysis in the five-project episode.
 
 \section{Discussion}\label{discussion}
 
-Rho's design makes an analysis available as a connected body of work: a question, its materials, computational activity, results and recorded choices. The five cases give this design a concrete use: a mismatch with published counts, the biological replicate behind a cell-level comparison, direction in a spatial contrast, sensitivity to annotation, and a patient-paired comparison each demand different evidence. The external-agent episodes show two specific routes by which work initiated elsewhere can be connected to project materials. These observations characterize examples, not the frequency of successful scientific discovery.
+Rho's design makes an analysis available as a connected body of work: a question, its materials, computational activity, results and recorded choices. The five cases give the method a concrete use: a mismatch with published counts, the biological replicate behind a cell-level comparison, direction in a spatial contrast, sensitivity to annotation, and a patient-paired comparison each demand different evidence. The external-agent episodes show two routes by which work initiated elsewhere can be connected to project materials. These observations characterize examples, not the frequency of successful scientific discovery.
 
-A shared view is useful only insofar as its representations remain interpretable. An output file, an agent-generated explanation and an independently verified scientific conclusion have different evidential status. Showing a table next to a plot can help locate the source of a question, but does not determine whether a model's assumptions are suitable, whether a reported difference is biological, or whether a researcher's next decision is sound. These questions require domain and statistical review.
+\subsection{Difference from the closest work}\label{difference}
 
-\subsection{Limitations and future evaluation}\label{limitations-and-future-evaluation}
+The comparison in Table~\ref{tab:closest} is meant to be read as three different landing points rather than one slogan. Relative to InsightLens, the organizing unit moves from an extracted insight to the materials and operations a current judgment requires. Relative to WaitGPT, the working interface links a scientific judgment to the computation that is meant to answer it, not only to the code chain. Relative to Mycelium, relevant scientific state is further turned into an interface a person can read and operate while an agent continues from the same state. The difference cannot be shortened to ``InsightLens only displays, WaitGPT only shows code, Mycelium only has a back end''.
 
-The examples use one configuration and selected, pre-existing datasets. They do not compare Rho with an alternative interface, measure users' understanding or decision quality, or establish full reproduction of the source studies. The P2 cell classes and comparisons require sample-aware validation; P3's combined enrichment has no direction; P4's unexplained annotation loss and count discrepancy need further investigation; and P5 depends on input-processing choices. No one case provides evidence that Rho validates scientific conclusions.
+Mycelium is especially close, and could even host this method's storage and routing. Rho should therefore not claim to invent shared scientific memory; the difference is how a working interface is formed for a purpose, and how that interface's organization and interaction take part in a continuing analysis. If an implementation merely adds a summary and a browsing page on top of such a graph, the difference does not hold.
+
+\subsection{When the claim does not hold}\label{falsify}
+
+Several criteria can directly defeat the candidate contribution:
+
+\begin{itemize}
+  \item If the same collaboration can be obtained by adding ``automatic notes $+$ a generated dashboard $+$ an appended summary to the model'' to an existing system, then prior work already covers it and there is no independent increment.
+  \item If ``the current purpose'' can only degrade into a search keyword or a fixed template, and material selection and relation statements do not produce an organization a person can check, then Section~\ref{method} has no substance.
+  \item If the interface organization cannot distinguish layout change, focus change and analysis-scope change, then a person's reading action is mistaken for an analysis decision and the shared state cannot be trusted.
+  \item If a revision lands only by timestamp on the latest version rather than by object identity and declared relations, then a revision during parallel progress falls on the wrong scope.
+  \item If the access conditions (local, remote, results-only) do not enter the shared state, the interface presents the incomplete as complete.
+\end{itemize}
+
+These criteria also point to the work needed: implement the round-trip on a real project, observe whether a person therefore judges evidence more easily and whether the agent therefore continues on the right object, and check whether the cost of organizing errors, layout jitter and relation maintenance is controlled.
+
+\subsection{Costs and risks}\label{costs}
+
+The method carries concrete costs: the system may misread a purpose, select the wrong material or hide a counterexample; an organization that changes with purpose may interrupt reading; extracting and scoping scientific relations adds burden; a single entrance may obscure differences between data and environments; an organization that is easy for a person to read is not necessarily the best context for an agent; and the runtime may not expose an observable point of attachment. Selection, conditions, gaps and updates must therefore stay checkable, and automatic generation cannot be used to make these problems disappear. ``A reasonable layout'' is a design goal that has to be argued for; it does not follow from automatic generation or from the availability of features.
+
+\subsection{Limitations and future evaluation}\label{limitations}
+
+The examples use one configuration and selected, pre-existing datasets. They do not compare Rho with an alternative interface, measure users' understanding or decision quality, or establish full reproduction of the source studies. The P2 cell classes and comparisons require sample-aware validation; P3's combined enrichment has no direction; P4's unexplained annotation loss and count discrepancy need further investigation; and P5 depends on input-processing choices. No single case provides evidence that Rho validates scientific conclusions.
 
 The next evidence should include an accessible, versioned record of each analysis; independent scientific review of the scripts, inputs and interpretations; and observations of researchers pursuing their own questions. A comparative study could test whether the interface helps people locate the evidence behind a claim, identify a discrepancy or choose a suitable next step. These remain research questions, not established outcomes of the present demonstrations.
 
+\subsection{Conclusion}\label{conclusion}
+
+When computation and agents are no longer the bottleneck, human judgment still needs materials, relations and operations to be organized. This paper presents a design that makes that organizing work explicit: select materials by the current scientific purpose, state their relations, compose operable views, bring the actual access conditions into the same representation, and let this organization be both the researcher's reading interface and the agent's shared continuation context, with human judgment and new results moving along the same set of versioned objects. The single-cell and bulk analyses show where the mechanism touches a scientist's work concretely, and where it meets the precedents of generative interfaces, shared scientific context, memory revision and plugin-based access. The paper does not claim any of those capabilities individually; it argues for the link that remains unexplained when they are combined, and that link stands or falls on whether it can be observed on a real project, not on a list of features.
+
 \section{Data, code and evidence availability}\label{data-code-and-evidence-availability}
 
-The public source datasets are GEO GSE274459, GSE221215, GSE232853, GSE270697 and GSE252990. The Rho implementation and the published external-agent episode records are available at \url{https://github.com/YuLab-SMU/Rho}; the bundled PA14 project is cited separately. The five analysis projects and their execution record are local and are not yet publicly archived. Their versioned release, including scripts and outputs sufficient to assess the stated results, is necessary before this manuscript can support independent review of those claims.
+The public source datasets are GEO GSE274459, GSE221215, GSE232853, GSE270697 and GSE252990. The Rho implementation and the published external-agent episode records are available at \url{https://github.com/YuLab-SMU/Rho}; the analyses used Rho 0.5.2 at source commit 64d73550f4bb1786e6cec42071fbe8a67a8ba230, and the bundled PA14 project is cited separately. The five analysis projects and their execution record are local and are not yet publicly archived. Their versioned release, including scripts and outputs sufficient to assess the stated results, is necessary before this manuscript can support independent review of those claims.
 
 \FloatBarrier
 \bibliographystyle{unsrt}

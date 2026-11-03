@@ -1,7 +1,10 @@
 # Rho preprint working draft
 
 `main.tex` is the editable manuscript; `references.bib` is its bibliography and
-`figures/` contains the eight figures used by the manuscript. The article uses
+`figures/` contains the figures used by the manuscript, including the generated
+vector architecture figure (`figure-architecture.pdf`) and the compact redrawn
+evidence figures. The original interface captures are moved out of the main text
+into `supplementary.tex` / `supplementary.pdf` (Supplementary Figures S1--S8). The article uses
 standard LaTeX packages and a single-column layout. `main.bbl` is the generated
 bibliography included in the source archive when available. The preview is a
 working draft, not a completed submission. Generated PDFs and the ZIP archive
