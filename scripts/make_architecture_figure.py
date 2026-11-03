@@ -148,7 +148,7 @@ def panel_a():
     arrow(plug[0] + plug[2], mid_y, app[0], mid_y, double=True, w=3, head=10)
     arrow(app[0] + app[2], mid_y, core[0], mid_y, double=True, w=3, head=10)
 
-    ss = (56, y0 + 380, W - 2 * M - 64, 104)
+    ss = (56, y0 + 380, W - 2 * M - 64, 128)
     rect(*ss)
     text(ss[0] + 26, ss[1] + 40, "Shared state", 26, DARK, "700")
     text(ss[0] + 26, ss[1] + 72,
@@ -157,6 +157,9 @@ def panel_a():
     text(ss[0] + 26, ss[1] + 96,
          "observed computation fact    |    agent interpretation    |    human judgment",
          20, SECOND)
+    text(ss[0] + 26, ss[1] + 120,
+         "local service on the machine  \u00b7  no Rho server  \u00b7  the browser has no "
+         "shell, filesystem or Core access", 18, ACCENT)
 
     for box in (plug, app, core):
         cx = box[0] + box[2] / 2
@@ -199,12 +202,14 @@ def panel_b():
     n4 = (560, 1335, 280, 130)
     n5 = (158, 1210, 270, 130)
     n6 = (158, 960, 270, 130)
-    hub = (525, 1085, 350, 128)
+    hub = (525, 1085, 350, 172)
 
     rect(*hub, rx=14, fill=FILL2, stroke=STROKE, sw=2.5)
-    text(cx, hub[1] + 44, "Shared state", 25, DARK, "700", "middle")
-    clines(cx, hub[1] + 78, ["three sources; per-object versions",
-                             "(no global revision)"], 20, SECOND, "400", 25)
+    text(cx, hub[1] + 42, "Shared state", 25, DARK, "700", "middle")
+    clines(cx, hub[1] + 74, ["three sources; per-object versions",
+                             "(no global revision)"], 20, SECOND, "400", 24)
+    clines(cx, hub[1] + 128, ["checkable invariants:", "identity \u00b7 version \u00b7 protection"],
+           19, ACCENT, "600", 23)
 
     def C(b):
         return (b[0] + b[2] / 2, b[1] + b[3] / 2)
