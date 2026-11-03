@@ -15,10 +15,10 @@
 \setlength{\emergencystretch}{3em}
 \title{Rho: A Purpose-Driven Workspace for Human--AI Collaborative Analysis}
 \author{%
-  Yonghe Xia$^{1}$ \quad Guangchuang Yu$^{2,*}$\\[0.5em]
-  \small $^{1}$School of Medicine, Westlake University, Hangzhou, China\\
-  \small $^{2}$Department of Bioinformatics, School of Basic Medical Sciences,\\
-  \small Southern Medical University, Guangzhou, China\\[0.4em]
+  Yonghe Xia$^{1,2}$ \quad Guangchuang Yu$^{1,*}$\\[0.5em]
+  \small $^{1}$Department of Bioinformatics, School of Basic Medical Sciences,\\
+  \small Southern Medical University, Guangzhou, China\\
+  \small $^{2}$School of Medicine, Westlake University, Hangzhou, China\\[0.4em]
   \small Yonghe Xia: \href{mailto:xiayonghe@westlake.edu.cn}{xiayonghe@westlake.edu.cn}\\
   \small $^{*}$Corresponding author: \href{mailto:gcyu1@smu.edu.cn}{gcyu1@smu.edu.cn}%
 }
@@ -47,7 +47,7 @@ The proposed contribution is therefore a method, not a particular screen or a mo
   \item \textbf{A positioning.} We compare the method directly with the closest work, stating for each what it already provides, what this paper adds and what it does not claim, and identify the one question that those precedents leave open.
 \end{enumerate}
 
-This is a design and method contribution, not an evaluation: no experiment and no user study were run. The five analyses illustrate interface behaviour under one configuration; they are selected expression-analysis tasks, not complete reproductions of their source studies, and they do not establish improved understanding, a comparison against other systems, or the scientific validity of any individual analysis. Section~\ref{method} states the method; Section~\ref{system} describes the architecture; Section~\ref{episodes} reports the analyses; Section~\ref{discussion} sets the boundary and the criteria under which the claim fails. Figure~\ref{fig:argument} states the argument; Figure~\ref{fig:system} the system that carries it; Figures~\ref{fig:p1judgment} and~\ref{fig:cases} the evidence.
+This is a design and method contribution: no experiment and no user study were run. Section~\ref{method} states the method; Section~\ref{system} describes the architecture; Section~\ref{episodes} reports the analyses; Section~\ref{discussion} sets the boundary and the criteria under which the claim fails. Figure~\ref{fig:argument} states the argument; Figure~\ref{fig:system} the system that carries it; Figures~\ref{fig:p1judgment} and~\ref{fig:cases} the evidence.
 
 \begin{figure}[!htbp]
 \centering
@@ -58,15 +58,15 @@ This is a design and method contribution, not an evaluation: no experiment and n
 
 \section{Related work}\label{related-work}
 
-Research on interactive and agent-assisted analysis already provides several of the capabilities Rho brings together. We read each source at a recorded version and, where useful, state not only what it does but what it does not by itself establish.
+Research on interactive and agent-assisted analysis already provides several of the capabilities Rho brings together. We read each source at a recorded version and state what it establishes.
 
 \subsection{Systems that make an analysis process inspectable}\label{rw-inspectable}
 
-Making a generated analysis inspectable is an established line. WaitGPT organizes an agent's code into a readable chain, shows execution state, and allows parameter changes, local follow-up questions and re-runs \cite{waitgpt}; interactive task decomposition exposes intermediate tasks for steering and verification and reports limits on how edits propagate \cite{decomposition}; AI Chains makes intermediate steps visible and editable \cite{aichains}; Treadstone renders the discussion of several analysis agents as a readable interface \cite{treadstone}. InsightLens goes further and makes the insight itself the unit: it extracts and revises insights, links them to supporting code, outputs and figures, and navigates by theme \cite{insightlens}. Loops uses provenance and visualization to support exploratory analysis in notebooks, including comparison across weeks \cite{loops}; analytic provenance for sensemaking is a longer research agenda \cite{analyticprovenance}. Together these establish that a process can be read, that insights can be organized and revisited, and that inspection can pause. They organize by extracted conclusions or by the steps of a pipeline; they do not ask which materials a specific current judgment requires.
+Making a generated analysis inspectable is an established line. WaitGPT organizes an agent's code into a readable chain, shows execution state, and allows parameter changes, local follow-up questions and re-runs \cite{waitgpt}; interactive task decomposition exposes intermediate tasks for steering and verification and reports limits on how edits propagate \cite{decomposition}; AI Chains makes intermediate steps visible and editable \cite{aichains}; Treadstone renders the discussion of several analysis agents as a readable interface \cite{treadstone}. InsightLens goes further and makes the insight itself the unit: it extracts and revises insights, links them to supporting code, outputs and figures, and navigates by theme \cite{insightlens}. Loops uses provenance and visualization to support exploratory analysis in notebooks, including comparison across weeks \cite{loops}; analytic provenance for sensemaking is a longer research agenda \cite{analyticprovenance}. These systems establish that a process can be read, that insights can be organized and revisited, and that inspection can pause. They organize by extracted conclusions or by the steps of a pipeline; they do not ask which materials a specific current judgment requires.
 
 \subsection{Intent-driven interface generation}\label{rw-intent}
 
-Intent-driven generation is a separate, older line. DynaVis synthesizes controls for visualization edits \cite{dynavis}; DashChat composes dashboard prototypes \cite{dashchat}; Generative UI produces whole pages from a prompt \cite{generativeui}; Data Formulator 2 uses data threads to revisit states and supply context for later work \cite{dataformulator}. Together they rule out claiming intent-driven layout, or ``a selected state as agent context'', as new. What they organize is a view, a dashboard or a page; the material a standing scientific judgment must bring together, and the relations among that material, are outside their scope.
+Intent-driven generation is a separate, older line. DynaVis synthesizes controls for visualization edits \cite{dynavis}; DashChat composes dashboard prototypes \cite{dashchat}; Generative UI produces whole pages from a prompt \cite{generativeui}; Data Formulator 2 uses data threads to revisit states and supply context for later work \cite{dataformulator}. They rule out claiming intent-driven layout, or ``a selected state as agent context'', as new. What they organize is a view, a dashboard or a page; the material a standing scientific judgment must bring together, and the relations among that material, are outside their scope.
 
 \subsection{Shared scientific context, memory and revision}\label{rw-shared}
 
@@ -82,7 +82,7 @@ Connecting different compute and environments into one workbench also has mature
 
 \subsection{The remaining gap}\label{rw-gap}
 
-Each line above solves one thing: the process can be read, insights can be organized, interfaces can be generated, state can be shared, capabilities can be plugged in. Together they leave one question open: \textbf{when all of these capabilities are present, what decides which materials should be organized into an operable working interface for the judgment at hand, and how does that organization become a fact shared by the person and the agent?} Existing systems decide the organization by a fixed workflow, by already-extracted insights, by a view intent, by a page, or by a transcript; none decides it by the materials and relations that a current scientific judgment requires. Table~\ref{tab:closest} places the closest work against this question and states the boundary of the claim explicitly.
+Each line above solves one thing: the process can be read, insights can be organized, interfaces can be generated, state can be shared, capabilities can be plugged in. One question remains: \textbf{when all of these capabilities are present, what decides which materials should be organized into an operable working interface for the judgment at hand, and how does that organization become a fact shared by the person and the agent?} Existing systems decide the organization by a fixed workflow, by already-extracted insights, by a view intent, by a page, or by a transcript; none decides it by the materials and relations that a current scientific judgment requires. Table~\ref{tab:closest} places the closest work against this question and states the boundary of the claim explicitly.
 
 \begin{table}[H]
 \centering
@@ -108,7 +108,7 @@ Galaxy; JupyterLab & Plugin access to local, cluster and remote compute; storage
 \end{tabular}
 \end{table}
 
-The table lists mechanisms each system explicitly reports in the version read; ``does not report this operation'' is a literature boundary, not a claim of impossibility. In every row the right column states only what this paper adds; where a preceding system already provides the remaining mechanism, this paper does not claim it, and the boundaries are collected in Section~\ref{limitations}. Extending these systems could realize parts of the method; the comparison would then turn on the organizing basis, the landing of a revision and the continuation boundary, not on a feature count.
+The table lists mechanisms each system explicitly reports in the version read; ``not reported'' is a literature boundary, not a claim of impossibility. Where a preceding system already provides a mechanism, this paper does not claim it (Section~\ref{limitations}). The comparison turns on the organizing basis, the landing of a revision and the continuation boundary, not on a feature count.
 
 \section{A purpose-driven organization method}\label{method}
 
@@ -135,13 +135,13 @@ Operations that look similar on one interface have different meanings. Moving a 
 
 \subsection{Shared state: three sources and per-object versions}\label{shared-state}
 
-The content of the shared state is distinguished by source: the computation facts actually observed, the explanations and associations an agent gives, and the judgments a researcher explicitly writes. The three may reference one another but cannot substitute for one another: a process exiting successfully does not imply a correct conclusion, an agent's explanation does not automatically become a scientific fact, and one of the researcher's readings does not constitute adoption. Versions are per object rather than global: each analysis and each resource has its own version, without a single revision number that treats the whole project as updating at once. The person's reading position, the analysis's current version and the version the agent most recently received are kept separately; the same scope does not mean the same result, receiving a revision does not mean having recomputed, and being offered a revision does not mean the agent has read it.
+The content of the shared state is distinguished by source: the computation facts actually observed, the explanations and associations an agent gives, and the judgments a researcher explicitly writes. The three may reference one another but cannot substitute for one another: a successful exit is not a correct conclusion, an agent's explanation is not a scientific fact, and a reading is not an adoption. Versions are per object: each analysis and each resource has its own version, with no global revision number. The person's reading position, the analysis's current version and the version the agent most recently received are kept separately; the same scope is not the same result, and receiving a revision is not recomputing or reading it.
 
 \subsection{Five operations form a round-trip}\label{five-ops}
 
 One round-trip has five recognizable operations, not a mandatory pipeline. \emph{Organize by purpose} selects or obtains the materials for the current judgment, states their roles and the gaps, and forms an operable layout. \emph{Read and explore} expands, locates and compares them while keeping layout, focus and analysis-scope changes distinct. \emph{Revise the purpose or the analysis} reselects materials or updates an interpretation and retains the original run facts and reading entry. \emph{Continue from the shared state} supplies a checkable agent context and records the actual access state. \emph{Reorganize as work advances} adds new results and states the change relative to what was read.
 
-Revision happens only when the person explicitly changes an analysis choice or an interpretation state; asking ``why'' produces only an attributed explanation. Reading, asking, adopting and revising are not merged into automatic consent.
+Revision happens only when the person explicitly changes an analysis choice or an interpretation state; asking ``why'' produces only an attributed explanation.
 
 \subsection{Capability providers and the organizer}\label{capability}
 
@@ -181,7 +181,7 @@ Local-first and agent-agnostic & The page is served from the machine at a loopba
 \end{tabular}
 \end{table}
 
-Protocol records: the \href{https://github.com/YuLab-SMU/Rho/blob/main/docs/COLLABORATION.md}{headless collaboration} and \href{https://github.com/YuLab-SMU/Rho/blob/main/docs/EXECUTION.md}{execution bridge} documents define these invariants and operations, and \href{https://github.com/YuLab-SMU/Rho/blob/main/docs/ARCHITECTURE.md}{Rho architecture} defines ownership. The table is a mapping from claims to mechanisms and evidence; it is not evidence that any one system realises the method end to end.
+Protocol records: the \href{https://github.com/YuLab-SMU/Rho/blob/main/docs/COLLABORATION.md}{headless collaboration} and \href{https://github.com/YuLab-SMU/Rho/blob/main/docs/EXECUTION.md}{execution bridge} documents define these invariants and operations, and \href{https://github.com/YuLab-SMU/Rho/blob/main/docs/ARCHITECTURE.md}{Rho architecture} defines ownership. The table maps claims to mechanisms and evidence.
 
 \section{Rho: architecture and interface}\label{system}
 
@@ -283,7 +283,7 @@ The Notebook made it possible to inspect an agent-attributed cell alongside its 
 
 Beyond the Notebook, two further views carry the same project. Studio places the written question next to the materials produced during the work; Graph shows recorded associations among a question, its findings, files and runs (Figures~S2 and~S3).
 
-Studio identifies the data and method, lists files, and preserves the unresolved difference in counts, so a conclusion can be traced to a script, output or recorded choice without treating a generated summary as the only source of truth. Graph distinguishes several kinds of evidence: an agent's report that a result exists, a filename mentioned in a command, an observed disk change and a statement in notes. Keeping them distinct helps a reader see what still requires checking; it does not make the graph a validated model of the scientific reasoning.
+Studio identifies the data and method, lists files, and preserves the unresolved difference in counts, so a conclusion can be traced to a script, output or recorded choice without treating a generated summary as the only source of truth. Graph distinguishes several kinds of evidence: an agent's report that a result exists, a filename mentioned in a command, an observed disk change and a statement in notes. Keeping them distinct helps a reader see what still requires checking.
 
 \FloatBarrier
 
@@ -336,7 +336,7 @@ Rho's bundled PA14 quorum-sensing project \cite{pa14} provides another starting 
 
 \section{Discussion}\label{discussion}
 
-Rho's design makes an analysis available as a connected body of work: a question, its materials, computational activity, results and recorded choices. The five cases give the method a concrete use: a mismatch with published counts, the biological replicate behind a cell-level comparison, direction in a spatial contrast, sensitivity to annotation, and a patient-paired comparison each demand different evidence. The external-agent episodes show two routes by which work initiated elsewhere can be connected to project materials. These observations characterize examples, not the frequency of successful scientific discovery.
+Rho's design makes an analysis available as a connected body of work: a question, its materials, computational activity, results and recorded choices. The five cases give the method a concrete use: a mismatch with published counts, the biological replicate behind a cell-level comparison, direction in a spatial contrast, sensitivity to annotation, and a patient-paired comparison each demand different evidence. The external-agent episodes show two routes by which work initiated elsewhere can be connected to project materials.
 
 \subsection{Difference from the closest work}\label{difference}
 
@@ -364,9 +364,9 @@ The method carries concrete costs: the system may misread a purpose, select the 
 
 \subsection{Limitations and future evaluation}\label{limitations}
 
-The examples use one configuration and selected, pre-existing datasets. They do not compare Rho with an alternative interface, measure users' understanding or decision quality, or establish full reproduction of the source studies; no benchmark of analysis outcomes is reported. The P2 cell classes and comparisons require sample-aware validation; P3's combined enrichment has no direction; P4's unexplained annotation loss and count discrepancy need further investigation; and P5 depends on input-processing choices. No single case provides evidence that Rho validates scientific conclusions, and independent researcher use has not been observed: the project's \href{https://github.com/YuLab-SMU/Rho/blob/main/docs/STATUS.md}{status} record makes no usability claim for the same reason. The checks in Section~\ref{checkable} are protocol-level: they show that a distinction is enforced by a mechanism, not that the mechanism improves a scientist's judgment. Those are different claims, and only the first is supported here.
+The examples use one configuration and selected, pre-existing datasets. They do not compare Rho with an alternative interface, measure users' understanding or decision quality, or establish full reproduction of the source studies; no benchmark of analysis outcomes is reported. The P2 cell classes and comparisons require sample-aware validation; P3's combined enrichment has no direction; P4's unexplained annotation loss and count discrepancy need further investigation; and P5 depends on input-processing choices. No single case shows that Rho improves a scientist's judgment, and independent researcher use has not been observed; the \href{https://github.com/YuLab-SMU/Rho/blob/main/docs/STATUS.md}{status} record makes no usability claim for the same reason. The checks in Section~\ref{checkable} are protocol-level: they show that a distinction is enforced, not that it improves a judgment.
 
-The next evidence should include an accessible, versioned record of each analysis; independent scientific review of the scripts, inputs and interpretations; and observations of researchers pursuing their own questions. A comparative study could test whether the interface helps people locate the evidence behind a claim, identify a discrepancy or choose a suitable next step. These remain research questions, not established outcomes of the present demonstrations.
+The next evidence should include an accessible, versioned record of each analysis; independent scientific review of the scripts, inputs and interpretations; and observations of researchers pursuing their own questions. A comparative study could test whether the interface helps people locate the evidence behind a claim, identify a discrepancy or choose a suitable next step.
 
 \subsection{Conclusion}\label{conclusion}
 
