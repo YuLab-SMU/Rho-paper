@@ -46,6 +46,29 @@ Xu et~al.
   \url{https://openaccess.city.ac.uk/id/eprint/15535/}; DOI
   10.1109/MCG.2015.50.
 
+\bibitem{dynavis}
+Vaithilingam et~al.
+\newblock {DynaVis}: Dynamically synthesized {UI} widgets for visualization
+  editing, 2024.
+\newblock CHI; arXiv:2401.10880v1; \url{https://arxiv.org/abs/2401.10880v1}.
+
+\bibitem{dashchat}
+Shen et~al.
+\newblock {DashChat}: Interactive authoring of industrial dashboard design
+  prototypes through conversation with {LLM}-powered agents, 2025.
+\newblock arXiv:2504.12865v1; \url{https://arxiv.org/abs/2504.12865v1}.
+
+\bibitem{generativeui}
+Leviathan et~al.
+\newblock Generative {UI}: {LLMs} are effective {UI} generators, 2026.
+\newblock arXiv:2604.09577v1; \url{https://arxiv.org/abs/2604.09577v1}.
+
+\bibitem{dataformulator}
+Wang et~al.
+\newblock Data formulator 2: Iteratively creating rich visualizations with
+  {AI}, 2024.
+\newblock arXiv:2408.16119v1; \url{https://arxiv.org/abs/2408.16119v1}.
+
 \bibitem{mycelium}
 Choudhury et~al.
 \newblock Networked intelligence: Active shared context graphs for human-{AI}
@@ -125,29 +148,6 @@ Jun, Misback, Heer, and Just.
 \newblock Common extension points, 2026.
 \newblock 4.4.x documentation;
   \url{https://jupyterlab.readthedocs.io/en/4.4.x/extension/extension_points.html}.
-
-\bibitem{dynavis}
-Vaithilingam et~al.
-\newblock {DynaVis}: Dynamically synthesized {UI} widgets for visualization
-  editing, 2024.
-\newblock CHI; arXiv:2401.10880v1; \url{https://arxiv.org/abs/2401.10880v1}.
-
-\bibitem{dashchat}
-Shen et~al.
-\newblock {DashChat}: Interactive authoring of industrial dashboard design
-  prototypes through conversation with {LLM}-powered agents, 2025.
-\newblock arXiv:2504.12865v1; \url{https://arxiv.org/abs/2504.12865v1}.
-
-\bibitem{dataformulator}
-Wang et~al.
-\newblock Data formulator 2: Iteratively creating rich visualizations with
-  {AI}, 2024.
-\newblock arXiv:2408.16119v1; \url{https://arxiv.org/abs/2408.16119v1}.
-
-\bibitem{generativeui}
-Leviathan et~al.
-\newblock Generative {UI}: {LLMs} are effective {UI} generators, 2026.
-\newblock arXiv:2604.09577v1; \url{https://arxiv.org/abs/2604.09577v1}.
 
 \bibitem{jati2025}
 S.~Jati et~al.
