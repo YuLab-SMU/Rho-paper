@@ -19,6 +19,21 @@ Compile from this directory with a current TeX distribution (for example,
 chosen TeX processor, and the generated PDF must be checked during submission;
 see [arXiv's TeX submission guidance](https://info.arxiv.org/help/submit_tex.html).
 
+For an editable Word copy, build from the same source with pandoc and run the
+post-processor, which restores the author superscripts, the arrows and the
+caption numbers:
+
+```sh
+sed 's#figures/figure-system\.pdf#figures/figure-system.png#' main.tex > .main-docx.tex
+pandoc .main-docx.tex -o main.docx --from=latex --to=docx --citeproc \
+  --bibliography=references.bib --resource-path=.:figures
+rm .main-docx.tex
+python3 ../../scripts/postprocess_docx.py
+```
+
+The substitution is needed because Word cannot display an embedded PDF; the
+manuscript keeps the vector `figure-system.pdf` for the typeset version.
+
 Before submission, publish a stable, versioned record of the five analyses and
 reference it in the manuscript; obtain
 scientific review of the case claims; and inspect the final arXiv-produced PDF.
